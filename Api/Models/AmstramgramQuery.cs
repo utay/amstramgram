@@ -15,7 +15,7 @@ namespace Api.Models
             Field<UserType>(
                 "user",
                 arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "id", Description = "id of the user" }
+                    new QueryArgument<NonNullGraphType<IntGraphType>> { Name = "id", Description = "id of the user" }
                 ),
                 resolve: context =>
                 {
