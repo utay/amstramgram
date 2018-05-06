@@ -47,6 +47,7 @@ namespace Api
             services.AddTransient<ILikeRepository, LikeRepository>();
             services.AddTransient<ITagRepository, TagRepository>();
             services.AddTransient<ICommentRepository, CommentRepository>();
+            services.AddTransient<IUserFollowerRepository, UserFollowerRepository>();
 
             if (Env.IsEnvironment("Test"))
             {
@@ -66,8 +67,13 @@ namespace Api
             services.AddTransient<PictureType>();
             services.AddTransient<PictureInputType>();
             services.AddTransient<TagType>();
+            services.AddTransient<TagInputType>();
             services.AddTransient<CommentType>();
+            services.AddTransient<CommentInputType>();
             services.AddTransient<LikeType>();
+            services.AddTransient<LikeInputType>();
+            services.AddTransient<UserFollowerType>();
+            services.AddTransient<UserFollowerInputType>();
 
             var sp = services.BuildServiceProvider();
             services.AddScoped<ISchema>(_ => new AmstramgramSchema(type => (GraphType)sp.GetService(type)) { Query = sp.GetService<AmstramgramQuery>(), Mutation = sp.GetService<AmstramgramMutation>() });
