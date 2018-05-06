@@ -51,16 +51,24 @@ namespace Data
             modelBuilder.Entity<Picture>()
                 .HasMany(p => p.Comments)
                 .WithOne(c => c.Picture);
+
             modelBuilder.Entity<Picture>()
                 .HasMany(p => p.Likes)
                 .WithOne(l => l.Picture);
 
+            modelBuilder.Entity<Picture>()
+                .HasOne(p => p.User)
+                .WithMany(u => u.Pictures)
+                .OnDelete(DeleteBehavior.Cascade);
+
             // likes
             modelBuilder.Entity<Like>().HasKey(l => new { l.UserId, l.PictureId });
+
             modelBuilder.Entity<Like>()
                 .HasOne(l => l.Picture)
                 .WithMany(p => p.Likes)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<Like>()
                 .HasOne(l => l.User)
                 .WithMany(u => u.Likes)
@@ -72,7 +80,7 @@ namespace Data
             modelBuilder.Entity<Tag>()
                 .HasOne(t => t.Picture)
                 .WithMany(p => p.Tags)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             // comments
             modelBuilder.Entity<Comment>().HasKey(c => c.Id);
@@ -80,7 +88,8 @@ namespace Data
             modelBuilder.Entity<Comment>()
                 .HasOne(c => c.Picture)
                 .WithMany(p => p.Comments)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<Comment>()
                 .HasOne(c => c.User)
                 .WithMany(u => u.Comments)
@@ -99,7 +108,7 @@ namespace Data
                 .HasOne(f => f.Follower)
                 .WithMany(u => u.Following)
                 .HasForeignKey(f => f.FollowerId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
         public virtual DbSet<User> Users { get; set; }
