@@ -5,8 +5,7 @@ namespace Core.Data
 {
     public interface IUserFollowerRepository : IBaseRepository<UserFollower, long>
     {
-        Task<User> GetUser(long id);
-        Task<User> GetFollower(long id);
-        Task<Like> Find(long userId, long followerId);
+        Task<UserFollower> Find(long userId, long followerId);
+        void Delete(long userId, long followerId);
     }
 }

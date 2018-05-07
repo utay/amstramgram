@@ -15,21 +15,15 @@ namespace Data.Repositories
         {
         }
 
-        public async Task<Picture> GetPicture(long id)
-        {
-            var like = await Get(id, "Picture");
-            return like.Picture;
-        }
-
-        public async Task<User> GetUser(long id)
-        {
-            var like = await Get(id, "User");
-            return like.User;
-        }
-
         public Task<Like> Find(long userId, long pictureId)
         {
             return _db.Set<Like>().FindAsync(userId, pictureId);
+        }
+
+        public void Delete(long userId, long pictureId)
+        {
+            var entity = new Like { UserId = userId, PictureId = pictureId };
+            _db.Set<Like>().Remove(entity);
         }
     }
 }

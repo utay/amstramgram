@@ -11,7 +11,7 @@ using System;
 namespace Data.Migrations
 {
     [DbContext(typeof(AmstramgramContext))]
-    [Migration("20180507101546_Setup")]
+    [Migration("20180507104604_Setup")]
     partial class Setup
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -5,8 +5,7 @@ namespace Core.Data
 {
     public interface ILikeRepository : IBaseRepository<Like, long>
     {
-        Task<User> GetUser(long id);
-        Task<Picture> GetPicture(long id);
         Task<Like> Find(long userId, long pictureId);
+        void Delete(long userId, long pictureId);
     }
 }

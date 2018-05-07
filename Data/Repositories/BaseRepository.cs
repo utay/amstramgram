@@ -89,5 +89,10 @@ namespace Data.Repositories
             _db.Set<TEntity>().Attach(entity);
             _db.Entry(entity).State = EntityState.Modified;
         }
+
+        public void Detach(TEntity entity)
+        {
+            _db.Entry(entity).State = EntityState.Detached;
+        }
     }
 }

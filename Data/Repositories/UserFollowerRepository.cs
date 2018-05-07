@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Core.Data;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repositories
 {
@@ -15,21 +16,15 @@ namespace Data.Repositories
         {
         }
 
-        public async Task<User> GetUser(long id)
-        {
-            var userFollower = await Get(id, "User");
-            return userFollower.User;
-        }
-
-        public async Task<User> GetFollower(long id)
-        {
-            var userFollower = await Get(id, "Follower");
-            return userFollower.Follower;
-        }
-
         public Task<UserFollower> Find(long userId, long followerId)
         {
             return _db.Set<UserFollower>().FindAsync(userId, followerId);
+        }
+
+        public void Delete(long userId, long followerId)
+        {
+            var entity = new UserFollower { UserId = userId, FollowerId = followerId };
+            _db.Set<UserFollower>().Remove(entity);
         }
     }
 }

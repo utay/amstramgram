@@ -19,5 +19,6 @@ namespace Core.Data
         void Delete(TKey id);
         void Update(TEntity entity);
         Task<bool> SaveChangesAsync();
+        void Detach(TEntity entity);
     }
 }

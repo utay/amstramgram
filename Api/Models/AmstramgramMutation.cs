@@ -118,6 +118,30 @@ namespace Api.Models
                 }
             );
 
+            Field<LikeType>(
+                "deleteLike",
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<LikeInputType>> { Name = "like" }
+                ),
+                resolve: context =>
+                {
+                    var data = context.GetArgument<Core.Models.Like>("like");
+                    if (userRepository.Get(data.UserId).Result == null || pictureRepository.Get(data.PictureId).Result == null)
+                    {
+                        return null;
+                    }
+                    var like = likeRepository.Find(data.UserId, data.PictureId).Result;
+                    if (like == null)
+                    {
+                        return null;
+                    }
+                    likeRepository.Detach(like);
+                    likeRepository.Delete(data.UserId, data.PictureId);
+                    likeRepository.SaveChangesAsync();
+                    return mapper.Map<Like>(like);
+                }
+            );
+
             Field<UserFollowerType>(
                 "createFollower",
                 arguments: new QueryArguments(
@@ -130,6 +154,10 @@ namespace Api.Models
                     {
                         return null;
                     }
+                    if (data.UserId == data.FollowerId)
+                    {
+                        return null;
+                    }
                     if (userFollowerRepository.Find(data.UserId, data.FollowerId).Result != null)
                     {
                         return null;
@@ -139,6 +167,31 @@ namespace Api.Models
                     return mapper.Map<UserFollower>(follower);
                 }
             );
+
+            Field<UserFollowerType>(
+                "deleteFollower",
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<UserFollowerInputType>> { Name = "follower" }
+                ),
+                resolve: context =>
+                {
+                    var data = context.GetArgument<Core.Models.UserFollower>("follower");
+                    if (userRepository.Get(data.UserId).Result == null || userRepository.Get(data.FollowerId).Result == null)
+                    {
+                        return null;
+                    }
+                    var follower = userFollowerRepository.Find(data.UserId, data.FollowerId).Result;
+                    if (follower == null)
+                    {
+                        return null;
+                    }
+                    userFollowerRepository.Detach(follower);
+                    userFollowerRepository.Delete(data.UserId, data.FollowerId);
+                    userFollowerRepository.SaveChangesAsync();
+                    return mapper.Map<UserFollower>(follower);
+                }
+            );
+
         }
     }
 }
