@@ -7,5 +7,6 @@ namespace Core.Data
     {
         Task<User> GetUser(long id);
         Task<Picture> GetPicture(long id);
+        Task<Like> Find(long userId, long pictureId);
     }
 }

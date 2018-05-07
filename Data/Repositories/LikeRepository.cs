@@ -26,5 +26,10 @@ namespace Data.Repositories
             var like = await Get(id, "User");
             return like.User;
         }
+
+        public Task<Like> Find(long userId, long pictureId)
+        {
+            return _db.Set<Like>().FindAsync(userId, pictureId);
+        }
     }
 }

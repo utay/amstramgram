@@ -7,5 +7,6 @@ namespace Core.Data
     {
         Task<User> GetUser(long id);
         Task<User> GetFollower(long id);
+        Task<Like> Find(long userId, long followerId);
     }
 }

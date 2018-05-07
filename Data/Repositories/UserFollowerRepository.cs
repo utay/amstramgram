@@ -26,5 +26,10 @@ namespace Data.Repositories
             var userFollower = await Get(id, "Follower");
             return userFollower.Follower;
         }
+
+        public Task<UserFollower> Find(long userId, long followerId)
+        {
+            return _db.Set<UserFollower>().FindAsync(userId, followerId);
+        }
     }
 }

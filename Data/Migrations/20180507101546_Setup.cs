@@ -36,7 +36,8 @@ namespace Data.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<long>(nullable: false),
-                    FollowerId = table.Column<long>(nullable: false)
+                    FollowerId = table.Column<long>(nullable: false),
+                    Id = table.Column<long>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -46,7 +47,7 @@ namespace Data.Migrations
                         column: x => x.FollowerId,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Followers_Users_UserId",
                         column: x => x.UserId,
@@ -98,7 +99,7 @@ namespace Data.Migrations
                         column: x => x.PictureId,
                         principalTable: "Pictures",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Comments_Users_UserId",
                         column: x => x.UserId,
@@ -113,7 +114,8 @@ namespace Data.Migrations
                 {
                     UserId = table.Column<long>(nullable: false),
                     PictureId = table.Column<long>(nullable: false),
-                    CreatedAt = table.Column<string>(nullable: true)
+                    CreatedAt = table.Column<string>(nullable: true),
+                    Id = table.Column<long>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -123,7 +125,7 @@ namespace Data.Migrations
                         column: x => x.PictureId,
                         principalTable: "Pictures",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Likes_Users_UserId",
                         column: x => x.UserId,
@@ -149,7 +151,7 @@ namespace Data.Migrations
                         column: x => x.PictureId,
                         principalTable: "Pictures",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(

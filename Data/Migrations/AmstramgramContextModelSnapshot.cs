@@ -52,6 +52,8 @@ namespace Data.Migrations
 
                     b.Property<string>("CreatedAt");
 
+                    b.Property<long>("Id");
+
                     b.HasKey("UserId", "PictureId");
 
                     b.HasIndex("PictureId");
@@ -133,6 +135,8 @@ namespace Data.Migrations
 
                     b.Property<long>("FollowerId");
 
+                    b.Property<long>("Id");
+
                     b.HasKey("UserId", "FollowerId");
 
                     b.HasIndex("FollowerId");
@@ -145,7 +149,7 @@ namespace Data.Migrations
                     b.HasOne("Core.Models.Picture", "Picture")
                         .WithMany("Comments")
                         .HasForeignKey("PictureId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Core.Models.User", "User")
                         .WithMany("Comments")
@@ -158,7 +162,7 @@ namespace Data.Migrations
                     b.HasOne("Core.Models.Picture", "Picture")
                         .WithMany("Likes")
                         .HasForeignKey("PictureId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Core.Models.User", "User")
                         .WithMany("Likes")
@@ -179,7 +183,7 @@ namespace Data.Migrations
                     b.HasOne("Core.Models.Picture", "Picture")
                         .WithMany("Tags")
                         .HasForeignKey("PictureId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Core.Models.UserFollower", b =>
@@ -187,7 +191,7 @@ namespace Data.Migrations
                     b.HasOne("Core.Models.User", "Follower")
                         .WithMany("Following")
                         .HasForeignKey("FollowerId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Core.Models.User", "User")
                         .WithMany("Followers")

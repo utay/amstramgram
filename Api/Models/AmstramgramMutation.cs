@@ -1,6 +1,7 @@
 using AutoMapper;
 using GraphQL.Types;
 using Core;
+using System;
 
 namespace Api.Models
 {
@@ -37,6 +38,12 @@ namespace Api.Models
                 resolve: context =>
                 {
                     var data = context.GetArgument<Core.Models.Picture>("picture");
+                    if (userRepository.Get(data.UserId).Result == null)
+                    {
+                        return null;
+                    }
+                    data.CreatedAt = DateTime.Now.ToString();
+                    data.UpdatedAt = DateTime.Now.ToString();
                     var picture = pictureRepository.Add(data);
                     pictureRepository.SaveChangesAsync();
                     return mapper.Map<Picture>(picture);
@@ -51,6 +58,14 @@ namespace Api.Models
                 resolve: context =>
                 {
                     var data = context.GetArgument<Core.Models.Tag>("tag");
+                    if (pictureRepository.Get(data.PictureId).Result == null)
+                    {
+                        return null;
+                    }
+                    if (data.Text == "")
+                    {
+                        return null;
+                    }
                     var tag = tagRepository.Add(data);
                     tagRepository.SaveChangesAsync();
                     return mapper.Map<Tag>(tag);
@@ -65,6 +80,15 @@ namespace Api.Models
                 resolve: context =>
                 {
                     var data = context.GetArgument<Core.Models.Comment>("comment");
+                    if (userRepository.Get(data.UserId).Result == null || pictureRepository.Get(data.PictureId).Result == null)
+                    {
+                        return null;
+                    }
+                    if (data.Text == "")
+                    {
+                        return null;
+                    }
+                    data.CreatedAt = DateTime.Now.ToString();
                     var comment = commentRepository.Add(data);
                     commentRepository.SaveChangesAsync();
                     return mapper.Map<Comment>(comment);
@@ -79,6 +103,15 @@ namespace Api.Models
                 resolve: context =>
                 {
                     var data = context.GetArgument<Core.Models.Like>("like");
+                    if (userRepository.Get(data.UserId).Result == null || pictureRepository.Get(data.PictureId).Result == null)
+                    {
+                        return null;
+                    }
+                    if (likeRepository.Find(data.UserId, data.PictureId).Result != null)
+                    {
+                        return null;
+                    }
+                    data.CreatedAt = DateTime.Now.ToString();
                     var like = likeRepository.Add(data);
                     likeRepository.SaveChangesAsync();
                     return mapper.Map<Like>(like);
@@ -93,6 +126,14 @@ namespace Api.Models
                 resolve: context =>
                 {
                     var data = context.GetArgument<Core.Models.UserFollower>("follower");
+                    if (userRepository.Get(data.UserId).Result == null || userRepository.Get(data.FollowerId).Result == null)
+                    {
+                        return null;
+                    }
+                    if (userFollowerRepository.Find(data.UserId, data.FollowerId).Result != null)
+                    {
+                        return null;
+                    }
                     var follower = userFollowerRepository.Add(data);
                     userFollowerRepository.SaveChangesAsync();
                     return mapper.Map<UserFollower>(follower);
