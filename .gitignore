@@ -254,3 +254,5 @@ paket-files/
 *.sln.iml
 
 coverage
+
+node_modules/
