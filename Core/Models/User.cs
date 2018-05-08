@@ -7,6 +7,7 @@ namespace Core.Models
 {
     public class User : IEntity<long>
     {
+        public string objectID { get; set; }
         public long Id { get; set; }
         public string Nickname { get; set; }
         public string Email { get; set; }

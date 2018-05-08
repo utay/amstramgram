@@ -5,6 +5,7 @@ namespace Core.Models
 {
     public class Picture : IEntity<long>
     {
+        public string objectID { get; set; }
         public long Id { get; set; }
         public string Image { get; set; }
         public string Description { get; set; }

@@ -30,6 +30,7 @@ namespace Api.Models
                     var data = context.GetArgument<Core.Models.User>("user");
                     var user = userRepository.Add(data);
                     userRepository.SaveChanges();
+                    data.objectID = data.Id.ToString();
                     usersIndex.AddObject(data);
                     return mapper.Map<User>(user);
                 }
@@ -51,6 +52,7 @@ namespace Api.Models
                     data.UpdatedAt = DateTime.Now.ToString();
                     var picture = pictureRepository.Add(data);
                     pictureRepository.SaveChanges();
+                    data.objectID = data.Id.ToString();
                     picturesIndex.AddObject(data);
                     return mapper.Map<Picture>(picture);
                 }

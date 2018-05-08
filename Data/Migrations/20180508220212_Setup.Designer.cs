@@ -11,7 +11,7 @@ using System;
 namespace Data.Migrations
 {
     [DbContext(typeof(AmstramgramContext))]
-    [Migration("20180508121248_Setup")]
+    [Migration("20180508220212_Setup")]
     partial class Setup
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -77,6 +77,8 @@ namespace Data.Migrations
 
                     b.Property<long>("UserId");
 
+                    b.Property<string>("objectID");
+
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
@@ -124,6 +126,8 @@ namespace Data.Migrations
                     b.Property<string>("Picture");
 
                     b.Property<bool>("Private");
+
+                    b.Property<string>("objectID");
 
                     b.HasKey("Id");
 

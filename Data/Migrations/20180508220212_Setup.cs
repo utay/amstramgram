@@ -24,7 +24,8 @@ namespace Data.Migrations
                     Password = table.Column<string>(nullable: true),
                     Phone = table.Column<string>(nullable: true),
                     Picture = table.Column<string>(nullable: true),
-                    Private = table.Column<bool>(nullable: false)
+                    Private = table.Column<bool>(nullable: false),
+                    objectID = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -66,7 +67,8 @@ namespace Data.Migrations
                     Description = table.Column<string>(nullable: true),
                     Image = table.Column<string>(nullable: true),
                     UpdatedAt = table.Column<string>(nullable: true),
-                    UserId = table.Column<long>(nullable: false)
+                    UserId = table.Column<long>(nullable: false),
+                    objectID = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
