@@ -20,5 +20,17 @@ namespace Data.Repositories
             var user = await Get(id, "Pictures");
             return user.Pictures;
         }
+
+        public async Task<ICollection<UserFollower>> GetFollowers(long id)
+        {
+            var user = await Get(id, "Followers");
+            return user.Followers;
+        }
+
+        public async Task<ICollection<UserFollower>> GetFollowing(long id)
+        {
+            var user = await Get(id, "Following");
+            return user.Following;
+        }
     }
 }

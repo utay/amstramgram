@@ -19,6 +19,7 @@ namespace Api.Models
             AlgoliaClient client = new AlgoliaClient("A71NP8C36C", "ac1a68327b713553e3d21307968adab7");
             Index usersIndex = client.InitIndex("Amstramgram_users");
             Index picturesIndex = client.InitIndex("Amstramgram_pictures");
+            Index tagsIndex = client.InitIndex("Amstramgram_tags");
 
             Field<UserType>(
                 "createUser",
@@ -52,6 +53,10 @@ namespace Api.Models
                     data.UpdatedAt = DateTime.Now.ToString();
                     var picture = pictureRepository.Add(data);
                     pictureRepository.SaveChanges();
+                    foreach (var tag in data.Tags)
+                    {
+                        tagsIndex.AddObject(tag);
+                    }
                     data.objectID = data.Id.ToString();
                     picturesIndex.AddObject(data);
                     return mapper.Map<Picture>(picture);

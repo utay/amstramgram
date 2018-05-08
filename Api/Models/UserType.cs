@@ -27,9 +27,28 @@ namespace Api.Models
                 "pictures",
                 resolve: context =>
                 {
-                    System.Console.WriteLine(context.Source.Id);
                     var pictures = userRepository.GetPictures(context.Source.Id).Result;
                     var mapped = mapper.Map<IEnumerable<Picture>>(pictures);
+                    return mapped;
+                }
+            );
+
+            Field<ListGraphType<UserFollowerType>>(
+                "followers",
+                resolve: context =>
+                {
+                    var followers = userRepository.GetFollowers(context.Source.Id).Result;
+                    var mapped = mapper.Map<IEnumerable<UserFollower>>(followers);
+                    return mapped;
+                }
+            );
+
+            Field<ListGraphType<UserFollowerType>>(
+                "following",
+                resolve: context =>
+                {
+                    var following = userRepository.GetFollowing(context.Source.Id).Result;
+                    var mapped = mapper.Map<IEnumerable<UserFollower>>(following);
                     return mapped;
                 }
             );
