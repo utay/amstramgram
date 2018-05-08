@@ -11,16 +11,14 @@ namespace Api.Models
         public AmstramgramMutation() { }
 
         public AmstramgramMutation(Core.Data.IUserRepository userRepository, Core.Data.IPictureRepository pictureRepository,
-            Core.Data.ITagRepository tagRepository, Core.Data.ICommentRepository commentRepository,
-            Core.Data.ILikeRepository likeRepository, Core.Data.IUserFollowerRepository userFollowerRepository,
-            IMapper mapper)
+            Core.Data.ICommentRepository commentRepository, Core.Data.ILikeRepository likeRepository,
+            Core.Data.IUserFollowerRepository userFollowerRepository, IMapper mapper)
         {
             Name = "Mutation";
 
             AlgoliaClient client = new AlgoliaClient("A71NP8C36C", "ac1a68327b713553e3d21307968adab7");
             Index usersIndex = client.InitIndex("Amstramgram_users");
             Index picturesIndex = client.InitIndex("Amstramgram_pictures");
-            Index tagsIndex = client.InitIndex("Amstramgram_tags");
 
             Field<UserType>(
                 "createUser",
@@ -55,29 +53,6 @@ namespace Api.Models
                     pictureRepository.SaveChanges();
                     picturesIndex.AddObject(data);
                     return mapper.Map<Picture>(picture);
-                }
-            );
-
-            Field<TagType>(
-                "createTag",
-                arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<TagInputType>> { Name = "tag" }
-                ),
-                resolve: context =>
-                {
-                    var data = context.GetArgument<Core.Models.Tag>("tag");
-                    if (pictureRepository.Get(data.PictureId).Result == null)
-                    {
-                        return null;
-                    }
-                    if (data.Text == "")
-                    {
-                        return null;
-                    }
-                    var tag = tagRepository.Add(data);
-                    tagRepository.SaveChanges();
-                    tagsIndex.AddObject(data);
-                    return mapper.Map<Tag>(tag);
                 }
             );
 

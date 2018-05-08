@@ -12,6 +12,7 @@ using Data.Seed;
 using Microsoft.EntityFrameworkCore;
 using GraphQL.Types;
 using GraphQL;
+using Newtonsoft.Json;
 //using Core.Logic;
 
 namespace Api
@@ -39,6 +40,11 @@ namespace Api
             services.AddCors();
             services.AddMvc();
             services.AddAutoMapper(typeof(Startup));
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            };
+
 
             services.AddScoped<AmstramgramQuery>();
             services.AddScoped<AmstramgramMutation>();
@@ -46,7 +52,6 @@ namespace Api
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IPictureRepository, PictureRepository>();
             services.AddTransient<ILikeRepository, LikeRepository>();
-            services.AddTransient<ITagRepository, TagRepository>();
             services.AddTransient<ICommentRepository, CommentRepository>();
             services.AddTransient<IUserFollowerRepository, UserFollowerRepository>();
 
@@ -67,14 +72,14 @@ namespace Api
             services.AddTransient<UserInputType>();
             services.AddTransient<PictureType>();
             services.AddTransient<PictureInputType>();
-            services.AddTransient<TagType>();
-            services.AddTransient<TagInputType>();
             services.AddTransient<CommentType>();
             services.AddTransient<CommentInputType>();
             services.AddTransient<LikeType>();
             services.AddTransient<LikeInputType>();
             services.AddTransient<UserFollowerType>();
             services.AddTransient<UserFollowerInputType>();
+            services.AddTransient<TagType>();
+            services.AddTransient<TagInputType>();
 
             var sp = services.BuildServiceProvider();
             services.AddScoped<ISchema>(_ => new AmstramgramSchema(type => (GraphType)sp.GetService(type)) { Query = sp.GetService<AmstramgramQuery>(), Mutation = sp.GetService<AmstramgramMutation>() });

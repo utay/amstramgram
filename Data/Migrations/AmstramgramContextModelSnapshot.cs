@@ -96,7 +96,7 @@ namespace Data.Migrations
 
                     b.HasIndex("PictureId");
 
-                    b.ToTable("Tags");
+                    b.ToTable("Tag");
                 });
 
             modelBuilder.Entity("Core.Models.User", b =>

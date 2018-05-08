@@ -7,6 +7,5 @@ public class TagInputType : InputObjectGraphType
         Name = "TagInput";
 
         Field<StringGraphType>("text");
-        Field<IntGraphType>("pictureId");
     }
 }

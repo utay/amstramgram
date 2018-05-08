@@ -9,5 +9,6 @@ public class PictureInputType : InputObjectGraphType
         Field<StringGraphType>("image");
         Field<StringGraphType>("description");
         Field<IntGraphType>("userId");
+        Field<ListGraphType<TagInputType>>("tags");
     }
 }

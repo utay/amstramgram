@@ -8,7 +8,7 @@ namespace Api.Models
         public string CreatedAt { get; set; }
         public string UpdatedAt { get; set; }
         public User User { get; set; }
-        public Tag[] Tags { get; set; }
+        public string[] Tags { get; set; }
         public Comment[] Comments { get; set; }
         public Like[] Likes { get; set; }
     }

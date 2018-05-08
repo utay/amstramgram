@@ -135,7 +135,7 @@ namespace Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tags",
+                name: "Tag",
                 columns: table => new
                 {
                     Id = table.Column<long>(nullable: false)
@@ -145,9 +145,9 @@ namespace Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tags", x => x.Id);
+                    table.PrimaryKey("PK_Tag", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Tags_Pictures_PictureId",
+                        name: "FK_Tag_Pictures_PictureId",
                         column: x => x.PictureId,
                         principalTable: "Pictures",
                         principalColumn: "Id",
@@ -180,8 +180,8 @@ namespace Data.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tags_PictureId",
-                table: "Tags",
+                name: "IX_Tag_PictureId",
+                table: "Tag",
                 column: "PictureId");
         }
 
@@ -197,7 +197,7 @@ namespace Data.Migrations
                 name: "Likes");
 
             migrationBuilder.DropTable(
-                name: "Tags");
+                name: "Tag");
 
             migrationBuilder.DropTable(
                 name: "Pictures");

@@ -11,7 +11,7 @@ using System;
 namespace Data.Migrations
 {
     [DbContext(typeof(AmstramgramContext))]
-    [Migration("20180507104604_Setup")]
+    [Migration("20180508121248_Setup")]
     partial class Setup
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -97,7 +97,7 @@ namespace Data.Migrations
 
                     b.HasIndex("PictureId");
 
-                    b.ToTable("Tags");
+                    b.ToTable("Tag");
                 });
 
             modelBuilder.Entity("Core.Models.User", b =>

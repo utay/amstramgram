@@ -16,14 +16,13 @@ namespace Api
             CreateMap<Core.Models.Picture, Picture>(MemberList.Destination)
                 .ForMember(dest => dest.User, opt => opt.Ignore());
 
+            // Tag
+            CreateMap<Core.Models.Tag, Tag>(MemberList.Destination);
+
             // Comment
             CreateMap<Core.Models.Comment, Comment>(MemberList.Destination)
                 .ForMember(dest => dest.Picture, opt => opt.Ignore())
                 .ForMember(dest => dest.User, opt => opt.Ignore());
-
-            // Tag
-            CreateMap<Core.Models.Tag, Tag>(MemberList.Destination)
-                .ForMember(dest => dest.Picture, opt => opt.Ignore());
 
             // Like
             CreateMap<Core.Models.Like, Like>(MemberList.Destination)

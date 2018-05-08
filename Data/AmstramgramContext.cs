@@ -48,6 +48,7 @@ namespace Data
             // pictures
             modelBuilder.Entity<Picture>().HasKey(p => p.Id);
             modelBuilder.Entity<Picture>().Property(p => p.Id).ValueGeneratedOnAdd();
+
             modelBuilder.Entity<Picture>()
                 .HasMany(p => p.Comments)
                 .WithOne(c => c.Picture);
@@ -73,14 +74,6 @@ namespace Data
                 .HasOne(l => l.User)
                 .WithMany(u => u.Likes)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            // tags
-            modelBuilder.Entity<Tag>().HasKey(t => t.Id);
-            modelBuilder.Entity<Tag>().Property(t => t.Id).ValueGeneratedOnAdd();
-            modelBuilder.Entity<Tag>()
-                .HasOne(t => t.Picture)
-                .WithMany(p => p.Tags)
-                .OnDelete(DeleteBehavior.Cascade);
 
             // comments
             modelBuilder.Entity<Comment>().HasKey(c => c.Id);
@@ -109,12 +102,15 @@ namespace Data
                 .WithMany(u => u.Following)
                 .HasForeignKey(f => f.FollowerId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // tags
+            modelBuilder.Entity<Tag>().HasKey(t => t.Id);
+            modelBuilder.Entity<Tag>().Property(t => t.Id).ValueGeneratedOnAdd();
         }
 
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Picture> Pictures { get; set; }
         public virtual DbSet<Like> Likes { get; set; }
-        public virtual DbSet<Tag> Tags { get; set; }
         public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<UserFollower> Followers { get; set; }
     }
