@@ -3,46 +3,70 @@
         <div slot="header"
           class="clearfix">
           <div style=" overflow:hidden; height:50px; width:50px; border-radius:50%;">
-            <img src="https://picsum.photos/1000"
+            <img :src="picture.User.Picture"
               alt="Profile picture" />
           </div>
-          <span style="margin-top: 15px;">feedthejim</span>
+          <span style="margin-top: 15px;">{{ picture.User.Nickname }}</span>
         </div>
-        <img src="https://picsum.photos/1000"
+        <img :src="picture.Image"
           class="image">
         <div style="padding: 14px;">
           <el-button type="text"
             icon="el-icon-circle-check"
-            style="">123 likes</el-button>
+            style="">{{ likesPhrase }}</el-button>
           <div>
-            <span>feedthejim </span>
-            <span class="legend">Such a good pic </span>
-            <el-button v-for="i in 5"
+            <span>{{ picture.User.Nickname }} </span>
+            <span class="legend">{{ picture.Description }} </span>
+            <el-button v-for="(tag, i) in picture.Tags"
               :key="i"
-              type="text">#toto</el-button>
+              type="text">#{{ tag.Text }}</el-button>
           </div>
           <el-button type="text"
             class="button">
-            Afficher les autres commentaires
+            Show comments
           </el-button>
-          <div class="time">Il y a 12 heures</div>
+          <div class="time">{{ fromNow }}</div>
         </div>
         <el-input type="textarea"
           :autosize="{ minRows: 1, maxRows: 4}"
-          placeholder="Ajouter un commentaire"
-          v-model="fixme">
+          placeholder="Add a comment"
+          v-model="comment">
         </el-input>
       </el-card>
 </template>
 
 <script>
+import moment from 'moment';
+import { getLikesAndComments } from '@/api/picture';
+
 export default {
+  props: {
+    picture: Object
+  },
+
   data() {
     return {
-      fixme: ""
+      likes: [],
+      comments: [],
+      comment: ''
     };
   },
-  methods: {}
+
+  async created() {
+    const response = await getLikesAndComments(this.picture.Id);
+    this.likes = response.picture.likes.map(like => like.createdAt);
+    this.comments = response.picture.comments.map(comment => comment.text);
+  },
+
+  computed: {
+    fromNow() {
+      return moment(this.picture.CreatedAt).fromNow();
+    },
+
+    likesPhrase() {
+      return `${this.likes.length} ${(this.likes.length > 1 ? 'likes' : 'like')}`;
+    }
+  },
 };
 </script>
 

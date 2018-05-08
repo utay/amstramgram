@@ -1,7 +1,16 @@
 <template>
   <div class="home">
-    <picture-card v-for="i in 10"
-      :key="i"></picture-card>
+    <ais-index
+      app-id="A71NP8C36C"
+      api-key="2251b2c1751fee3ffef49c37eedf28d4"
+      index-name="Amstramgram_pictures"
+    >
+      <ais-results>
+        <template slot-scope="{ result }">
+          <picture-card :picture="result"></picture-card>
+        </template>
+      </ais-results>
+    </ais-index>
   </div>
 </template>
 

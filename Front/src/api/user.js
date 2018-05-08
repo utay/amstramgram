@@ -9,10 +9,24 @@ export async function getUser(id) {
       password
       firstname
       lastname
+      picture
       phone
       gender
       description
       private
+      pictures {
+        image
+      }
+      followers {
+        user {
+          id
+        }
+      }
+      following {
+        user {
+          id
+        }
+      }
     }
   }`);
 }

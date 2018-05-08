@@ -3,10 +3,13 @@ import Router from 'vue-router';
 import Home from './views/Home.vue';
 import About from './views/About.vue';
 import Profile from './views/Profile.vue';
+import User from './views/User.vue';
 import ElementUI from 'element-ui';
+import InstantSearch from 'vue-instantsearch';
 
 Vue.use(Router);
-Vue.use(ElementUI)
+Vue.use(ElementUI);
+Vue.use(InstantSearch);
 
 export default new Router({
   routes: [
@@ -19,6 +22,11 @@ export default new Router({
       path: '/profile',
       name: 'profile',
       component: Profile,
+    },
+    {
+      path: '/user/:id',
+      name: 'user',
+      component: User,
     },
   ],
 });
