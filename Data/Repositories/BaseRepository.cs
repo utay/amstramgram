@@ -79,9 +79,9 @@ namespace Data.Repositories
             _db.Set<TEntity>().Remove(entity);
         }
 
-        public virtual async Task<bool> SaveChangesAsync()
+        public virtual bool SaveChanges()
         {
-            return (await _db.SaveChangesAsync()) > 0;
+            return _db.SaveChanges() > 0;
         }
 
         public virtual void Update(TEntity entity)

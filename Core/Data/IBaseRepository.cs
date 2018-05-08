@@ -18,7 +18,7 @@ namespace Core.Data
         void AddRange(IEnumerable<TEntity> entities);
         void Delete(TKey id);
         void Update(TEntity entity);
-        Task<bool> SaveChangesAsync();
+        bool SaveChanges();
         void Detach(TEntity entity);
     }
 }

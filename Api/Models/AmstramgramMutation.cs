@@ -2,6 +2,7 @@ using AutoMapper;
 using GraphQL.Types;
 using Core;
 using System;
+using Algolia.Search;
 
 namespace Api.Models
 {
@@ -16,6 +17,11 @@ namespace Api.Models
         {
             Name = "Mutation";
 
+            AlgoliaClient client = new AlgoliaClient("A71NP8C36C", "ac1a68327b713553e3d21307968adab7");
+            Index usersIndex = client.InitIndex("Amstramgram_users");
+            Index picturesIndex = client.InitIndex("Amstramgram_pictures");
+            Index tagsIndex = client.InitIndex("Amstramgram_tags");
+
             Field<UserType>(
                 "createUser",
                 arguments: new QueryArguments(
@@ -25,7 +31,8 @@ namespace Api.Models
                 {
                     var data = context.GetArgument<Core.Models.User>("user");
                     var user = userRepository.Add(data);
-                    userRepository.SaveChangesAsync();
+                    userRepository.SaveChanges();
+                    usersIndex.AddObject(data);
                     return mapper.Map<User>(user);
                 }
             );
@@ -45,7 +52,8 @@ namespace Api.Models
                     data.CreatedAt = DateTime.Now.ToString();
                     data.UpdatedAt = DateTime.Now.ToString();
                     var picture = pictureRepository.Add(data);
-                    pictureRepository.SaveChangesAsync();
+                    pictureRepository.SaveChanges();
+                    picturesIndex.AddObject(data);
                     return mapper.Map<Picture>(picture);
                 }
             );
@@ -67,7 +75,8 @@ namespace Api.Models
                         return null;
                     }
                     var tag = tagRepository.Add(data);
-                    tagRepository.SaveChangesAsync();
+                    tagRepository.SaveChanges();
+                    tagsIndex.AddObject(data);
                     return mapper.Map<Tag>(tag);
                 }
             );
@@ -90,7 +99,7 @@ namespace Api.Models
                     }
                     data.CreatedAt = DateTime.Now.ToString();
                     var comment = commentRepository.Add(data);
-                    commentRepository.SaveChangesAsync();
+                    commentRepository.SaveChanges();
                     return mapper.Map<Comment>(comment);
                 }
             );
@@ -113,7 +122,7 @@ namespace Api.Models
                     }
                     data.CreatedAt = DateTime.Now.ToString();
                     var like = likeRepository.Add(data);
-                    likeRepository.SaveChangesAsync();
+                    likeRepository.SaveChanges();
                     return mapper.Map<Like>(like);
                 }
             );
@@ -137,7 +146,7 @@ namespace Api.Models
                     }
                     likeRepository.Detach(like);
                     likeRepository.Delete(data.UserId, data.PictureId);
-                    likeRepository.SaveChangesAsync();
+                    likeRepository.SaveChanges();
                     return mapper.Map<Like>(like);
                 }
             );
@@ -163,7 +172,7 @@ namespace Api.Models
                         return null;
                     }
                     var follower = userFollowerRepository.Add(data);
-                    userFollowerRepository.SaveChangesAsync();
+                    userFollowerRepository.SaveChanges();
                     return mapper.Map<UserFollower>(follower);
                 }
             );
@@ -187,11 +196,10 @@ namespace Api.Models
                     }
                     userFollowerRepository.Detach(follower);
                     userFollowerRepository.Delete(data.UserId, data.FollowerId);
-                    userFollowerRepository.SaveChangesAsync();
+                    userFollowerRepository.SaveChanges();
                     return mapper.Map<UserFollower>(follower);
                 }
             );
-
         }
     }
 }
