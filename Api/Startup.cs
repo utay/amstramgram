@@ -36,6 +36,7 @@ namespace Api
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
+            services.AddCors();
             services.AddMvc();
             services.AddAutoMapper(typeof(Startup));
 
@@ -85,6 +86,10 @@ namespace Api
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+
+            app.UseCors(
+                options => options.WithOrigins("http://localhost:8080").AllowAnyMethod().AllowAnyHeader().AllowCredentials()
+            );
 
             app.UseStaticFiles();
             app.UseMvc();

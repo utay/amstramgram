@@ -12,11 +12,16 @@
 </template>
 
 <script>
+import { getUser } from "./api/user";
 import Navbar from "./components/Navbar.vue";
 
 export default {
   components: {
     Navbar
+  },
+
+  async created() {
+    const response = await getUser(1);
   }
 };
 </script>
