@@ -49,8 +49,9 @@ namespace Api.Models
                     {
                         return null;
                     }
-                    data.CreatedAt = DateTime.Now.ToString();
-                    data.UpdatedAt = DateTime.Now.ToString();
+                    var date = ((Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds).ToString();
+                    data.CreatedAt = date;
+                    data.UpdatedAt = date;
                     var picture = pictureRepository.Add(data);
                     pictureRepository.SaveChanges();
                     foreach (var tag in data.Tags)
@@ -79,7 +80,8 @@ namespace Api.Models
                     {
                         return null;
                     }
-                    data.CreatedAt = DateTime.Now.ToString();
+                    var date = ((Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds).ToString();
+                    data.CreatedAt = date;
                     var comment = commentRepository.Add(data);
                     commentRepository.SaveChanges();
                     return mapper.Map<Comment>(comment);
@@ -102,7 +104,8 @@ namespace Api.Models
                     {
                         return null;
                     }
-                    data.CreatedAt = DateTime.Now.ToString();
+                    var date = ((Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds).ToString();
+                    data.CreatedAt = date;
                     var like = likeRepository.Add(data);
                     likeRepository.SaveChanges();
                     return mapper.Map<Like>(like);
