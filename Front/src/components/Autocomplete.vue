@@ -2,8 +2,8 @@
   <div>
     <el-input placeholder="Search" v-model="query" />
 
-    <div v-show="query !== ''" class="search-results">
-      <!--<ais-index
+    <div v-if="query !== ''" class="search-results">
+      <ais-index
         app-id="A71NP8C36C"
         api-key="2251b2c1751fee3ffef49c37eedf28d4"
         index-name="Amstramgram_tags"
@@ -14,7 +14,7 @@
             <span v-html="result._highlightResult.Text.value" />
           </template>
         </ais-results>
-      </ais-index>-->
+      </ais-index>
 
       <ais-index
         app-id="A71NP8C36C"

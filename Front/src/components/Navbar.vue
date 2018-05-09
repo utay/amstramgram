@@ -7,13 +7,7 @@
       AmStramGram
     </el-menu-item>
     <el-menu-item index="2">
-      <ais-index
-        app-id="A71NP8C36C"
-        api-key="2251b2c1751fee3ffef49c37eedf28d4"
-        index-name="Amstramgram_pictures"
-      >
-        <autocomplete />
-      </ais-index>
+      <autocomplete />
     </el-menu-item>
     <el-submenu index="3">
       <template slot="title">Workspace</template>
