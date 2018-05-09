@@ -1,14 +1,31 @@
 <template>
   <div class="home">
+    <el-tag
+      v-for="(tag, i) in tags"
+      :key="i"
+      @close="handleClose(tag)"
+      closable
+      type="danger">
+      {{ tag }}
+    </el-tag>
+
     <ais-index
       app-id="A71NP8C36C"
       api-key="2251b2c1751fee3ffef49c37eedf28d4"
       index-name="Amstramgram_pictures"
-      :query-parameters="{ page: (page === 0 ? 1 : page), hitsPerPage: 4 }"
+      :query-parameters="{
+        page: (page === 0 ? 1 : page),
+        hitsPerPage: 4,
+        filters: tags.length === 0 ? '' : `Tags.Text:'${tags.join(',')}'`
+      }"
     >
       <ais-results :stack="true">
         <template slot-scope="{ result }">
           <picture-card :picture="result"></picture-card>
+        </template>
+
+        <template slot="footer">
+          <div v-observe-visibility="loadMore"></div>
         </template>
       </ais-results>
 
@@ -18,15 +35,14 @@
           <p>Follow some people to fill your news feed!</p>
         </template>
       </ais-no-results>
-
-      <div v-observe-visibility="loadMore"></div>
     </ais-index>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
+import { mapGetters } from 'vuex';
 import PictureCard from "@/components/PictureCard.vue";
+import store from '@/store';
 
 export default {
   name: "home",
@@ -46,7 +62,15 @@ export default {
       if (isVisible) {
         this.page++;
       }
-    }
+    },
+
+    handleClose(tag) {
+      store.dispatch('deleteTag', tag);
+    },
+  },
+
+  computed: {
+    ...mapGetters(['tags']),
   },
 };
 </script>

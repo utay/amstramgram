@@ -37,7 +37,7 @@
       >
         <ais-results>
           <template slot-scope="{ result }">
-            <p>
+            <p @click="addTag(result.Text)">
               <span v-html="result._highlightResult.Text.value" />
             </p>
           </template>
@@ -54,6 +54,8 @@
 </template>
 
 <script>
+import store from '@/store';
+
 export default {
   data() {
     return {
@@ -65,6 +67,12 @@ export default {
     toUserPage(id) {
       this.$router.push({ name: 'user', params: { id } });
     }
+  },
+
+  methods: {
+    addTag(tag) {
+      store.dispatch('addTag', tag);
+    },
   },
 };
 </script>
