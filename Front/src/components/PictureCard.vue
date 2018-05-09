@@ -60,7 +60,7 @@ export default {
 
   computed: {
     fromNow() {
-      return moment(this.picture.CreatedAt).fromNow();
+      return moment.unix(this.picture.CreatedAt).fromNow();
     },
 
     likesPhrase() {

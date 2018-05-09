@@ -14,7 +14,7 @@
 
       <ais-no-results class="no-results">
         <template slot-scope="props">
-          <p>This is the very beginning of your adventure on Amstramgram.</p>
+          <p>This is the very beginning of your adventure on AmStramGram.</p>
           <p>Follow some people to fill your news feed!</p>
         </template>
       </ais-no-results>
