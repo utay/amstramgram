@@ -6,10 +6,12 @@ import Profile from './views/Profile.vue';
 import User from './views/User.vue';
 import ElementUI from 'element-ui';
 import InstantSearch from 'vue-instantsearch';
+import VueObserveVisibility from 'vue-observe-visibility'
 
 Vue.use(Router);
 Vue.use(ElementUI);
 Vue.use(InstantSearch);
+Vue.use(VueObserveVisibility);
 
 export default new Router({
   routes: [
