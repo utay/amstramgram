@@ -11,7 +11,7 @@ using System;
 namespace Data.Migrations
 {
     [DbContext(typeof(AmstramgramContext))]
-    [Migration("20180508220212_Setup")]
+    [Migration("20180510121051_Setup")]
     partial class Setup
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -66,6 +66,8 @@ namespace Data.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Color");
 
                     b.Property<string>("CreatedAt");
 

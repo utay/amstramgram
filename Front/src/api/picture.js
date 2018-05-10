@@ -1,7 +1,7 @@
-import request from "./index";
+import { query } from "./index";
 
 export async function getLikesAndComments(id) {
-  return request(`{
+  return query(`{
     picture(id: ${id}) {
       comments {
         text
@@ -9,6 +9,20 @@ export async function getLikesAndComments(id) {
       likes {
         createdAt
       }
+    }
+  }`);
+}
+
+export async function createPicture(data) {
+  return query(`mutation {
+    createPicture(picture: {
+      image: "${data.url}",
+      description: "${data.description}",
+      userId: ${1},
+      tags: [${data.tags.map(tag => `{text:"${tag}"}`)}],
+      color: "${data.color}"
+    }) {
+      id
     }
   }`);
 }

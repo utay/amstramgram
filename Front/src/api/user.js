@@ -1,7 +1,7 @@
-import request from "./index";
+import { query } from "./index";
 
 export async function getUser(id) {
-  return request(`{
+  return query(`{
     user(id: ${id}) {
       id
       nickname

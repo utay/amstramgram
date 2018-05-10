@@ -4,6 +4,7 @@ import Home from './views/Home.vue';
 import About from './views/About.vue';
 import Profile from './views/Profile.vue';
 import User from './views/User.vue';
+import Upload from './views/Upload.vue';
 import ElementUI from 'element-ui';
 import InstantSearch from 'vue-instantsearch';
 import VueObserveVisibility from 'vue-observe-visibility'
@@ -29,6 +30,11 @@ export default new Router({
       path: '/user/:id',
       name: 'user',
       component: User,
+    },
+    {
+      path: '/upload',
+      name: 'upload',
+      component: Upload,
     },
   ],
 });

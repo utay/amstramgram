@@ -39,7 +39,7 @@ export default {
         case '2':
           break;
         case '3':
-          this.$router.push({ name: 'add' });
+          this.$router.push({ name: 'upload' });
           break;
         case '4':
           this.$router.push({ name: 'settings' });

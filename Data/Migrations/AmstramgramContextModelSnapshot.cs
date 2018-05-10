@@ -66,6 +66,8 @@ namespace Data.Migrations
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("Color");
+
                     b.Property<string>("CreatedAt");
 
                     b.Property<string>("Description");

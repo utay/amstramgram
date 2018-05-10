@@ -14,6 +14,7 @@ namespace Api.Models
             Field(x => x.Id).Description("The Id of the picture.");
             Field(x => x.Image, nullable: true).Description("The image of the picture.");
             Field(x => x.Description, nullable: true).Description("The description of the picture.");
+            Field(x => x.Color, nullable: true).Description("The accent color of the picture.");
             Field(x => x.CreatedAt, nullable: true).Description("The creation date of the picture.");
             Field(x => x.UpdatedAt, nullable: true).Description("The update date of the picture.");
 

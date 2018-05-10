@@ -1,5 +1,5 @@
 <template>
-      <el-card style="margin: 0 auto; width: 40%; margin-bottom: 20px; " :body-style='{"text-align": "left"}'>
+      <el-card :style="`margin: 0 auto; width: 40%; margin-bottom: 20px; border-top: 2px solid #${picture.Color}`" :body-style='{"text-align": "left"}'>
         <div slot="header"
           class="clearfix">
           <div style=" overflow:hidden; height:50px; width:50px; border-radius:50%;">
