@@ -66,12 +66,12 @@ export default {
   methods: {
     toUserPage(id) {
       this.$router.push({ name: 'user', params: { id } });
-    }
-  },
+      this.query = '';
+    },
 
-  methods: {
     addTag(tag) {
       store.dispatch('addTag', tag);
+      this.query = '';
     },
   },
 };

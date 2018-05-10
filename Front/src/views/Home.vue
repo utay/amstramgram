@@ -16,7 +16,7 @@
       :query-parameters="{
         page: (page === 0 ? 1 : page),
         hitsPerPage: 4,
-        filters: tags.length === 0 ? '' : `Tags.Text:'${tags.join(',')}'`
+        filters: tags.length === 0 ? '' : `Tags.Text:'${tags.join('\' AND Tags.Text:\'')}'`
       }"
     >
       <ais-results :stack="true">
