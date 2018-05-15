@@ -25,5 +25,11 @@ namespace Data.Repositories
             var entity = new Like { UserId = userId, PictureId = pictureId };
             _db.Set<Like>().Remove(entity);
         }
+
+        public async Task<User> GetUser(long id)
+        {
+            var comment = await Get(id, "User");
+            return comment.User;
+        }
     }
 }

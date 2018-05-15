@@ -12,6 +12,17 @@ namespace Api.Models
 
             Field(x => x.Id, nullable: true).Description("The id of the comment.");
             Field(x => x.Text, nullable: true).Description("The text of the comment.");
+            Field(x => x.CreatedAt, nullable: true).Description("The date of the creation of the comment.");
+
+            Field<UserType>(
+                "user",
+                resolve: context =>
+                {
+                    var user = commentRepository.GetUser(context.Source.Id).Result;
+                    var mapped = mapper.Map<User>(user);
+                    return mapped;
+                }
+            );
         }
     }
 }
