@@ -1,23 +1,24 @@
 <template>
   <div class="home">
-    <el-tag
-      v-for="(tag, i) in tags"
-      :key="i"
-      @close="handleClose(tag)"
-      closable
-      type="danger">
-      {{ tag }}
-    </el-tag>
+    <div class="tags">
+      <el-tag
+        v-for="(tag, i) in tags"
+        :key="i"
+        @close="handleClose(tag)"
+        closable
+        type="danger">
+        {{ tag }}
+      </el-tag>
+    </div>
 
     <ais-index
-      app-id="A71NP8C36C"
-      api-key="2251b2c1751fee3ffef49c37eedf28d4"
-      index-name="Amstramgram_pictures"
+      :search-store="searchStore"
       :query-parameters="{
-        page: (page === 0 ? 1 : page),
+        page,
         hitsPerPage: 4,
         filters: tags.length === 0 ? '' : `Tags.Text:'${tags.join('\' AND Tags.Text:\'')}'`
       }"
+      indexName="Amstramgram_pictures"
     >
       <ais-results :stack="true">
         <template slot-scope="{ result }">
@@ -40,9 +41,11 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
 import PictureCard from "@/components/PictureCard.vue";
 import store from '@/store';
+import { createFromAlgoliaCredentials } from 'vue-instantsearch';
+
+const searchStore = createFromAlgoliaCredentials('A71NP8C36C', '2251b2c1751fee3ffef49c37eedf28d4');
 
 export default {
   name: "home",
@@ -53,14 +56,17 @@ export default {
 
   data() {
     return {
-      page: 0,
+      searchStore,
+      page: 1,
     };
   },
 
   methods: {
     loadMore(isVisible) {
       if (isVisible) {
-        this.page++;
+        if (this.page < searchStore.totalPages) {
+          this.page++;
+        }
       }
     },
 
@@ -70,7 +76,9 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['tags']),
+    tags() {
+      return store.getters.tags;
+    }
   },
 };
 </script>
@@ -79,5 +87,9 @@ export default {
 .no-results {
   margin-top: 50px;
   color: grey;
+}
+
+.tags {
+  margin-bottom: 20px;
 }
 </style>
