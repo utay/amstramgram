@@ -4,7 +4,8 @@
       style="width: 50%; margin: 0 auto; padding-bottom: 25px"
       justify="center">
       <el-col :span="8">
-        <img :src="user.picture" class="image-profile">
+        <img :src="user.picture"
+          class="image-profile">
       </el-col>
       <el-col :span="16">
         <el-card :body-style='{"text-align": "left"}'>
@@ -14,7 +15,8 @@
             <el-button type="primary"
               style="float: right; padding: 4px 0"
               icon="el-icon-back"></el-button>
-            <el-button v-if="myProfile" style="float: right; padding: 3px 10px"
+            <el-button v-if="myProfile"
+              style="float: right; padding: 3px 10px"
               type="text">Update profile</el-button>
           </div>
           <div>
@@ -31,26 +33,72 @@
     <el-row :gutter="10"
       style="width: 50%; margin: 0 auto;"
       justify="center">
-      <el-col :span="8" v-for="(picture, i) in user.pictures" :key="i">
-        <img :src="picture.image" class="image">
+      <el-col :span="8"
+        v-for="(picture, i) in user.pictures"
+        :key="i">
+        <img :src="picture.image"
+          class="image">
       </el-col>
     </el-row>
   </div>
 </template>
 
 <script>
-import { getUser } from '@/api/user';
+import { getUser } from "@/api/user";
 
 export default {
   props: {
-    id: Number,
+    id: Number
   },
 
   data() {
     return {
-      user: {},
+      user: {
+        id: 1,
+        nickname: "feedthejim",
+        email: "toto@tata.fr",
+        password: "??",
+        firstname: "Lai",
+        lastname: "Jimmy",
+        picture: "https://picsum.photos/200",
+        phone: "0339302",
+        gender: true,
+        description: "dqzdqz",
+        private: true,
+        pictures: [
+          {
+            image: "https://picsum.photos/200"
+          }, 
+          {
+            image: "https://picsum.photos/200"
+
+          },
+          {
+            image: "https://picsum.photos/200"
+
+          },
+          {
+            image: "https://picsum.photos/200"
+
+          },
+        ],
+        followers: [
+          {
+            user: {
+              id: "toot"
+            }
+          }
+        ],
+        following: [
+          {
+            user: {
+              id: "tooo"
+            }
+          }
+        ]
+      },
       myProfile: false,
-      isLoading: true,
+      isLoading: true
     };
   },
 
@@ -58,9 +106,9 @@ export default {
     this.myProfile = this.id !== undefined;
     const id = this.myProfile ? this.id : this.$route.params.id;
     const response = await getUser(id);
-    this.user = response.user;
+    this.user = response.user || this.user;
     this.isLoading = false;
-  },
+  }
 };
 </script>
 

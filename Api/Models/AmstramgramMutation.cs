@@ -16,7 +16,7 @@ namespace Api.Models
         {
             Name = "Mutation";
 
-            AlgoliaClient client = new AlgoliaClient("A71NP8C36C", "ac1a68327b713553e3d21307968adab7");
+            AlgoliaClient client = new AlgoliaClient("II4W4PPGW1", "412763c2f87e6e3f95ec9ee84003d2ee");
             Index usersIndex = client.InitIndex("Amstramgram_users");
             Index picturesIndex = client.InitIndex("Amstramgram_pictures");
             Index tagsIndex = client.InitIndex("Amstramgram_tags");

@@ -51,7 +51,11 @@ export default {
   name: "home",
 
   components: {
-    PictureCard,
+    PictureCard
+  },
+
+  created() {
+    store.dispatch("connectUser", 1);
   },
 
   data() {
@@ -71,8 +75,8 @@ export default {
     },
 
     handleClose(tag) {
-      store.dispatch('deleteTag', tag);
-    },
+      store.dispatch("deleteTag", tag);
+    }
   },
 
   computed: {

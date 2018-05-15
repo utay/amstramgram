@@ -13,6 +13,18 @@ export async function getLikesAndComments(id) {
   }`);
 }
 
+export const createComment = async (comment, pictureId, userId) => {
+  return query(`mutation {
+    createComment(comment: {
+      text: "${comment}",
+      userId: ${userId},
+      pictureId: ${pictureId},
+    }) {
+      id
+    }
+  }`); 
+}
+
 export async function createPicture(data) {
   return query(`mutation {
     createPicture(picture: {
