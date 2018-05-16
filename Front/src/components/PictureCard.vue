@@ -1,13 +1,15 @@
 <template>
-  <el-card :style="`margin: 0 auto; width: 40%; margin-bottom: 20px; border-top: 2px solid #${picture.Color}`"
+  <el-card :style="`
+    margin: 0 auto;
+    width: 40%; 
+    margin-bottom: 20px; 
+    border-top: 2px solid #${picture.Color}`"
     :body-style='{"text-align": "left"}'>
     <div slot="header"
-      class="clearfix">
-      <div style=" overflow:hidden; height:50px; width:50px; border-radius:50%;">
-        <img :src="picture.User.Picture"
-          alt="Profile picture" />
-      </div>
-      <span style="margin-top: 15px;">{{ picture.User.Nickname }}</span>
+      class="center-vertically">
+      <div class="round-icon flex"
+        :style="{ 'background-image': 'url(' + picture.User.Picture + ')' }" />
+      <a href="#" class="flex">{{ picture.User.Nickname }}</a>
     </div>
     <img :src="picture.Image"
       class="image">
@@ -116,8 +118,34 @@ export default {
 </script>
 
 <style scoped>
-.pull-right{
-    float: right;
+.center-vertically {
+      display: flex;
+    align-items: center;
+    /* flex-direction: column; */
+    justify-content: flex-start;
+}
+
+.flex {
+  display: flex;
+}
+
+.pull-right {
+  float: right;
+}
+
+.pull-left {
+  float: left;
+}
+
+.round-icon {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
 }
 
 .tags {
