@@ -110,8 +110,11 @@ namespace Facebook.Client
                 //  This should match the Site URL configured for your Facebook APP, such as "http://localhost:5000/"
                 ListenPort = 5000,
 
-                AuthorizationEndpoint = "https://www.facebook.com/dialog/oauth",
-                TokenEndpoint = "https://graph.facebook.com/oauth/access_token",
+                AuthorizationEndpoint = "https://www.facebook.com/v3.0/dialog/oauth",
+                TokenEndpoint = "https://graph.facebook.com/v3.0/oauth/access_token",
+
+                RedirectAllowHtml = "http://localhost:5000/users/callback",
+                RedirectDenyHtml = "http://localhost:5000/users/deny",
 
                 //  Replace these with actual values.
                 ClientId = "373455309833356",
@@ -127,6 +130,7 @@ namespace Facebook.Client
 
             //  Begin the OAuth2 three-legged flow.  This returns a URL that should be loaded in a browser.
             string url = oauth2.StartAuth();
+            _logger?.LogInformation(url);
             if (oauth2.LastMethodSuccess != true)
             {
                 throw new InvalidFacebookConnectionException(oauth2.LastErrorText);

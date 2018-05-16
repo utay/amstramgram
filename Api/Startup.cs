@@ -13,6 +13,10 @@ using Microsoft.EntityFrameworkCore;
 using GraphQL.Types;
 using GraphQL;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Rewrite;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 //using Core.Logic;
 
 namespace Api
@@ -35,10 +39,16 @@ namespace Api
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {
+        {   
+
             // Add framework services.
             services.AddCors();
             services.AddMvc();
+            services.Configure<MvcOptions>(options =>
+            {
+                options.Filters.Add(new RequireHttpsAttribute());
+            });
+
             services.AddAutoMapper(typeof(Startup));
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings
             {
@@ -83,6 +93,16 @@ namespace Api
 
             var sp = services.BuildServiceProvider();
             services.AddScoped<ISchema>(_ => new AmstramgramSchema(type => (GraphType)sp.GetService(type)) { Query = sp.GetService<AmstramgramQuery>(), Mutation = sp.GetService<AmstramgramMutation>() });
+
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                    .AddEntityFrameworkStores<AmstramgramContext>()
+                    .AddDefaultTokenProviders();
+
+            services.AddAuthentication().AddFacebook(facebookOptions =>
+            {
+                facebookOptions.AppId = Configuration["Facebook:AppId"];
+                facebookOptions.AppSecret = Configuration["Facebook:AppSecret"];
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -93,11 +113,17 @@ namespace Api
             loggerFactory.AddDebug();
 
             app.UseCors(
-                options => options.WithOrigins("http://localhost:8080").AllowAnyMethod().AllowAnyHeader().AllowCredentials()
+                options => options.WithOrigins("http://localhost:8080", "http://localhost:5000").AllowAnyMethod().AllowAnyHeader().AllowCredentials()
             );
 
             app.UseStaticFiles();
             app.UseMvc();
+
+            var optionsRewrite = new RewriteOptions()
+                              .AddRedirectToHttps(StatusCodes.Status301MovedPermanently, 63423);
+            app.UseRewriter(optionsRewrite);
+
+
             // db.EnsureSeedData();
         }
     }

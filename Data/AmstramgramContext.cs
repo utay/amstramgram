@@ -2,10 +2,11 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Logging;
 using Core.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Data
 {
-    public class AmstramgramContext : DbContext
+    public class AmstramgramContext : IdentityDbContext<ApplicationUser>
     {
         public readonly ILogger _logger;
         private bool _migrations;
@@ -23,6 +24,11 @@ namespace Data
             //Database.Migrate();
         }
 
+        public AmstramgramContext(DbContextOptions options) 
+            : base(options)
+        {
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (_migrations)
@@ -37,6 +43,8 @@ namespace Data
         {
             // https://docs.microsoft.com/en-us/ef/core/modeling/relationships
             // http://stackoverflow.com/questions/38520695/multiple-relationships-to-the-same-table-in-ef7core
+
+            base.OnModelCreating(modelBuilder);
 
             // users
             modelBuilder.Entity<User>().HasKey(u => u.Id);
