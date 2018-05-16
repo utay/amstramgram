@@ -12,6 +12,10 @@ export async function getLikesAndComments(id) {
       }
       likes {
         createdAt
+        user {
+          id
+          nickname
+        }
       }
     }
   }`);
@@ -25,6 +29,28 @@ export const createComment = async (comment, pictureId, userId) => {
       pictureId: ${pictureId},
     }) {
       id
+    }
+  }`); 
+}
+
+export const createLike = async(pictureId, userId) => {
+  return query(`mutation {
+    createLike(like: {
+      userId: ${userId},
+      pictureId: ${pictureId},
+    }) {
+      createdAt
+    }
+  }`); 
+}
+
+export const deleteLike = async(pictureId, userId) => {
+  return query(`mutation {
+    deleteLike(like: {
+      userId: ${userId},
+      pictureId: ${pictureId},
+    }) {
+      createdAt
     }
   }`); 
 }

@@ -9,13 +9,15 @@
       class="center-vertically">
       <div class="round-icon flex"
         :style="{ 'background-image': 'url(' + picture.User.Picture + ')' }" />
-      <a href="#" class="flex">{{ picture.User.Nickname }}</a>
+      <a href="#"
+        class="flex">{{ picture.User.Nickname }}</a>
     </div>
     <img :src="picture.Image"
       class="image">
     <div style="padding: 14px;">
       <el-button type="text"
-        icon="el-icon-circle-check"
+        @click="toggleLikePicture"
+        :icon="`el-icon-circle-check${liked ? '' : '-outline'}`"
         style="">{{ likesPhrase }}</el-button>
       <div>
         <a href="#">
@@ -60,7 +62,7 @@
 
 <script>
 import moment from "moment";
-import { getLikesAndComments, createComment } from "@/api/picture";
+import { getLikesAndComments, createComment, createLike, deleteLike } from "@/api/picture";
 import store from "@/store";
 import _ from "lodash";
 
@@ -74,7 +76,7 @@ export default {
       likes: [],
       comments: [],
       comment: "",
-      showMore: false
+      showMore: false,
     };
   },
 
@@ -85,8 +87,16 @@ export default {
   },
 
   methods: {
+    async toggleLikePicture() {
+      if (!this.liked) {
+        await createLike(this.picture.Id, store.getters.currentUser.id);
+      } else {
+        await deleteLike(this.picture.Id, store.getters.currentUser.id);
+      }
+      await this.refreshPicture();
+    },
     async createComment() {
-      const data = await createComment(
+      await createComment(
         this.comment,
         this.picture.Id,
         store.getters.currentUser.id
@@ -96,7 +106,7 @@ export default {
     },
     async refreshPicture() {
       const response = await getLikesAndComments(this.picture.Id);
-      this.likes = response.picture.likes.map(like => like.createdAt);
+      this.likes = response.picture.likes;
       this.comments = response.picture.comments;
     }
   },
@@ -106,6 +116,11 @@ export default {
   },
 
   computed: {
+    liked() {
+      return !!this.likes.find(
+        like => like.user.id === store.getters.currentUser.id
+      );
+    },
     orderedComments() {
       return _.orderBy(this.comments, ["createdAt"], ["asc"]);
     },
@@ -119,10 +134,10 @@ export default {
 
 <style scoped>
 .center-vertically {
-      display: flex;
-    align-items: center;
-    /* flex-direction: column; */
-    justify-content: flex-start;
+  display: flex;
+  align-items: center;
+  /* flex-direction: column; */
+  justify-content: flex-start;
 }
 
 .flex {

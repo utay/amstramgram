@@ -4,8 +4,8 @@
       style="width: 50%; margin: 0 auto; padding-bottom: 25px"
       justify="center">
       <el-col :span="8">
-        <img :src="user.picture"
-          class="image-profile">
+        <div :style="{ 'background-image': 'url(' + user.picture+ ')' }"
+          class="round-icon" />
       </el-col>
       <el-col :span="16">
         <el-card :body-style='{"text-align": "left"}'>
@@ -68,19 +68,16 @@ export default {
         pictures: [
           {
             image: "https://picsum.photos/200"
-          }, 
-          {
-            image: "https://picsum.photos/200"
-
           },
           {
             image: "https://picsum.photos/200"
-
           },
           {
             image: "https://picsum.photos/200"
-
           },
+          {
+            image: "https://picsum.photos/200"
+          }
         ],
         followers: [
           {
@@ -120,5 +117,16 @@ export default {
 .image-profile {
   width: 80%;
   border-radius: 50%;
+}
+
+.round-icon {
+  display: inline-block;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
 }
 </style>
