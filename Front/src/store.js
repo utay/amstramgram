@@ -36,11 +36,6 @@ export default new Vuex.Store({
     },
   },
   getters: {
-    tags: state => {
-      return state.tags;
-    },
-    currentUser: state => state.currentUser,
     isConnected: state => !!state.currentUser,
-    notifications: state => state.notifications
   },
 });

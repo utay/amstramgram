@@ -23,7 +23,6 @@
       </el-menu-item>
       <el-menu-item index="5">
         <el-dropdown>
-
           <el-badge :value="100"
             :max="10"
             class="item">
@@ -33,7 +32,7 @@
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item v-for="notification of notifications"
               :key="notification.createdAt">
-              {{ notification.type}}
+              {{ notification.type}} - {{ notification.createdAt | fromNow }}
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -52,6 +51,7 @@
 </template>
 
 <script>
+import moment from "moment";
 import Autocomplete from "./Autocomplete";
 import Upload from "../views/Upload.vue";
 import { getAllCommentsAndLikes } from "@/api/user";
@@ -60,8 +60,7 @@ import store from "@/store";
 export default {
   data() {
     return {
-      dialogVisible: false,
-      notifications: store.getters.notifications
+      dialogVisible: false
     };
   },
 
@@ -70,7 +69,17 @@ export default {
     Upload
   },
 
-  computed: {},
+  computed: {
+    notifications() {
+      return _.orderBy(this.$store.state.notifications, ["createdAt"], ["desc"]);
+   }
+  },
+
+  filters: {
+    fromNow(date) {
+      return moment.unix(date).fromNow();
+    }
+  },
 
   methods: {
     handleSelect(key, keyPath) {

@@ -68,7 +68,6 @@ import {
   createLike,
   deleteLike
 } from "@/api/picture";
-import store from "@/store";
 import _ from "lodash";
 
 export default {
@@ -94,9 +93,9 @@ export default {
   methods: {
     async toggleLikePicture() {
       if (!this.liked) {
-        await createLike(this.picture.Id, store.getters.currentUser.id);
+        await createLike(this.picture.Id, this.$store.state.currentUser.id);
       } else {
-        await deleteLike(this.picture.Id, store.getters.currentUser.id);
+        await deleteLike(this.picture.Id, this.$store.state.currentUser.id);
       }
       await this.refreshPicture();
     },
@@ -123,7 +122,7 @@ export default {
   computed: {
     liked() {
       return !!this.likes.find(
-        like => like.user.id === store.getters.currentUser.id
+        like => like.user.id === this.$store.state.currentUser.id
       );
     },
     orderedComments() {

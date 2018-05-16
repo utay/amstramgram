@@ -1,32 +1,31 @@
 <template>
   <div class="home">
     <div class="tags">
-      <el-tag
+      <el-tag 
         v-for="(tag, i) in tags"
         :key="i"
-        @close="handleClose(tag)"
         closable
-        type="danger">
+        type="danger"
+        @close="handleClose(tag)">
         {{ tag }}
       </el-tag>
     </div>
 
-    <ais-index
+    <ais-index 
       :search-store="searchStore"
       :query-parameters="{
         page,
         hitsPerPage: 4,
         filters: tags.length === 0 ? '' : `Tags.Text:'${tags.join('\' AND Tags.Text:\'')}'`
       }"
-      indexName="Amstramgram_pictures"
-    >
+      index-name="Amstramgram_pictures">
       <ais-results :stack="true">
         <template slot-scope="{ result }">
-          <picture-card :picture="result"></picture-card>
+          <picture-card :picture="result"/>
         </template>
 
         <template slot="footer">
-          <div v-observe-visibility="loadMore"></div>
+          <div v-observe-visibility="loadMore"/>
         </template>
       </ais-results>
 
@@ -42,13 +41,16 @@
 
 <script>
 import PictureCard from "@/components/PictureCard.vue";
-import store from '@/store';
-import { createFromAlgoliaCredentials } from 'vue-instantsearch';
+import store from "@/store";
+import { createFromAlgoliaCredentials } from "vue-instantsearch";
 
-const searchStore = createFromAlgoliaCredentials('II4W4PPGW1', '633ea05725cb749e80a21ba50e779a9c');
+const searchStore = createFromAlgoliaCredentials(
+  "II4W4PPGW1",
+  "633ea05725cb749e80a21ba50e779a9c"
+);
 
 export default {
-  name: "home",
+  name: "Home",
 
   components: {
     PictureCard
@@ -57,8 +59,14 @@ export default {
   data() {
     return {
       searchStore,
-      page: 1,
+      page: 1
     };
+  },
+
+  computed: {
+    tags() {
+      return store.getters.tags;
+    }
   },
 
   methods: {
@@ -72,12 +80,6 @@ export default {
 
     handleClose(tag) {
       store.dispatch("deleteTag", tag);
-    }
-  },
-
-  computed: {
-    tags() {
-      return store.getters.tags;
     }
   },
 };
