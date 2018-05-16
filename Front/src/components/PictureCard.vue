@@ -40,7 +40,7 @@
         <span class="time pull-right">{{ comment.createdAt | fromNow }}</span>
       </div>
       <el-button type="text"
-        v-if="!showMore"
+        v-if="orderedComments.length > 0 && !showMore"
         @click="showMore = true"
         class="button">
         Show more comments..
@@ -62,7 +62,12 @@
 
 <script>
 import moment from "moment";
-import { getLikesAndComments, createComment, createLike, deleteLike } from "@/api/picture";
+import {
+  getLikesAndComments,
+  createComment,
+  createLike,
+  deleteLike
+} from "@/api/picture";
 import store from "@/store";
 import _ from "lodash";
 
@@ -76,7 +81,7 @@ export default {
       likes: [],
       comments: [],
       comment: "",
-      showMore: false,
+      showMore: false
     };
   },
 

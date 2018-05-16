@@ -30,10 +30,10 @@ export const createComment = async (comment, pictureId, userId) => {
     }) {
       id
     }
-  }`); 
+  }`);
 }
 
-export const createLike = async(pictureId, userId) => {
+export const createLike = async (pictureId, userId) => {
   return query(`mutation {
     createLike(like: {
       userId: ${userId},
@@ -41,10 +41,10 @@ export const createLike = async(pictureId, userId) => {
     }) {
       createdAt
     }
-  }`); 
+  }`);
 }
 
-export const deleteLike = async(pictureId, userId) => {
+export const deleteLike = async (pictureId, userId) => {
   return query(`mutation {
     deleteLike(like: {
       userId: ${userId},
@@ -52,7 +52,7 @@ export const deleteLike = async(pictureId, userId) => {
     }) {
       createdAt
     }
-  }`); 
+  }`);
 }
 
 export async function createPicture(data) {

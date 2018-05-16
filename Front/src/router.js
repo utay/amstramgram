@@ -31,10 +31,5 @@ export default new Router({
       name: 'user',
       component: User,
     },
-    {
-      path: '/upload',
-      name: 'upload',
-      component: Upload,
-    },
   ],
 });
