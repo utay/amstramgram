@@ -32,7 +32,7 @@
     </el-menu>
     <el-dialog
       :visible.sync="dialogVisible"
-      width="70%">
+      width="80%">
       <upload v-if="dialogVisible" @uploadDone="dialogVisible = false"/>
     </el-dialog>
   </div>

@@ -11,7 +11,7 @@
         Upload a picture!
       </div>
       <img v-else
-        style="height:100%"
+        style="height:100%; width: 100%"
         :src="image.url">
     </el-col>
     <el-col :span="12"
@@ -105,7 +105,9 @@ export default {
         {
           cloud_name: "dnrtun0ab",
           upload_preset: "vus5ebhc",
-          multiple: false
+          multiple: false,
+          cropping: "server",
+          cropping_aspect_ratio: 1,
         },
         (error, result) => {
           this.image.url = result[0].url;
