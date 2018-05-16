@@ -22,6 +22,11 @@
           :key="i"
           type="text">#{{ tag.Text }}</el-button>
       </div>
+      <div v-for="(comment, i) of comments"
+        :key="i">
+        <span>{{ i }} </span>
+        <span class="legend">{{ comment }} </span>
+      </div>
       <el-button type="text"
         class="button">
         Show comments
@@ -65,14 +70,19 @@ export default {
         this.picture.Id,
         store.getters.currentUser.id
       );
-      console.log(data);
+      await this.refreshPicture()
+      this.comment = ""
+      
+    },
+    async refreshPicture() {
+      const response = await getLikesAndComments(this.picture.Id);
+      this.likes = response.picture.likes.map(like => like.createdAt);
+      this.comments = response.picture.comments;
     }
   },
 
   async created() {
-    const response = await getLikesAndComments(this.picture.Id);
-    this.likes = response.picture.likes.map(like => like.createdAt);
-    this.comments = response.picture.comments.map(comment => comment.text);
+    await refreshPicture()
   },
 
   computed: {
