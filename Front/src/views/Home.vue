@@ -54,10 +54,6 @@ export default {
     PictureCard
   },
 
-  created() {
-    store.dispatch("connectUser", 1);
-  },
-
   data() {
     return {
       searchStore,

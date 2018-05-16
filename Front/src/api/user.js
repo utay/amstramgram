@@ -1,5 +1,7 @@
 import { query } from "./index";
 
+import _ from "lodash"
+
 export async function getUser(id) {
   return query(`{
     user(id: ${id}) {
@@ -29,4 +31,41 @@ export async function getUser(id) {
       }
     }
   }`);
+}
+
+
+export const getAllCommentsAndLikes = async (id) => {
+  const { user } = await query(`{
+    user(id: ${id}) {
+      pictures {
+        image 
+        comments {
+          text
+          createdAt
+        }
+        likes {
+          createdAt
+      
+        }
+      }
+    }
+  }`);
+
+  const res = []
+  user.pictures.forEach(picture => {
+    picture.comments.forEach(comment => {
+      res.push({
+        type: "comment",
+        ...comment,
+      })
+    })
+    picture.likes.forEach(comment => {
+      res.push({
+        type: "likes",
+        ...comment,
+      })
+    })
+  });
+  console.log(res)
+  return res
 }

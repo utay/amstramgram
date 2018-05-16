@@ -22,18 +22,31 @@
           class="fas fa-cog fa-2x"></i>
       </el-menu-item>
       <el-menu-item index="5">
-        <i style="font-size: 1.2rem"
-          class="fas fa-heart fa-2x"></i>
+        <el-dropdown>
+
+          <el-badge :value="100"
+            :max="10"
+            class="item">
+            <i style="font-size: 1.2rem"
+              class="fas fa-heart fa-2x"></i>
+          </el-badge>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item v-for="notification of notifications"
+              :key="notification.createdAt">
+              {{ notification.type}}
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
       </el-menu-item>
       <el-menu-item index="6">
         <i style="font-size: 1.2rem"
           class="fas fa-user"></i>
       </el-menu-item>
     </el-menu>
-    <el-dialog
-      :visible.sync="dialogVisible"
+    <el-dialog :visible.sync="dialogVisible"
       width="80%">
-      <upload v-if="dialogVisible" @uploadDone="dialogVisible = false"/>
+      <upload v-if="dialogVisible"
+        @uploadDone="dialogVisible = false" />
     </el-dialog>
   </div>
 </template>
@@ -41,18 +54,23 @@
 <script>
 import Autocomplete from "./Autocomplete";
 import Upload from "../views/Upload.vue";
+import { getAllCommentsAndLikes } from "@/api/user";
+import store from "@/store";
 
 export default {
   data() {
     return {
-      dialogVisible: false
+      dialogVisible: false,
+      notifications: store.getters.notifications
     };
   },
 
   components: {
     Autocomplete,
-    Upload,
+    Upload
   },
+
+  computed: {},
 
   methods: {
     handleSelect(key, keyPath) {

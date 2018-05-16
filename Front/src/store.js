@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { getUser } from "@/api/user";
+import { getUser, getAllCommentsAndLikes } from "@/api/user";
 
 Vue.use(Vuex);
 
@@ -8,6 +8,7 @@ export default new Vuex.Store({
   state: {
     tags: [],
     currentUser: undefined,
+    notifications: []
   },
   mutations: {
     addTag(state, tag) {
@@ -16,8 +17,9 @@ export default new Vuex.Store({
     deleteTag(state, tag) {
       state.tags = state.tags.filter(t => t !== tag);
     },
-    setUser(state, user) {
-      state.currentUser = user
+    setUser(state, payload) {
+      state.currentUser = payload.user
+      state.notifications = payload.notifications
     },
   },
   actions: {
@@ -29,7 +31,8 @@ export default new Vuex.Store({
     },
     connectUser: async (context, userId) => {
       const { user } = await getUser(userId)
-      context.commit('setUser', user)
+      const notifications = await getAllCommentsAndLikes(userId)
+      context.commit('setUser', { user, notifications })
     },
   },
   getters: {
@@ -38,5 +41,6 @@ export default new Vuex.Store({
     },
     currentUser: state => state.currentUser,
     isConnected: state => !!state.currentUser,
+    notifications: state => state.notifications
   },
 });

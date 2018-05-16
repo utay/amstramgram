@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { getUser } from "./api/user";
+import store from "@/store";
 import Navbar from "./components/Navbar.vue";
 
 export default {
@@ -21,7 +21,7 @@ export default {
   },
 
   async created() {
-    const response = await getUser(1);
+    store.dispatch("connectUser", 1);
   }
 };
 </script>

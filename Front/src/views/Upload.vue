@@ -108,6 +108,7 @@ export default {
           multiple: false,
           cropping: "server",
           cropping_aspect_ratio: 1,
+          theme: "minimal",
         },
         (error, result) => {
           this.image.url = result[0].url;
