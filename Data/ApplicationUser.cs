@@ -13,5 +13,6 @@ namespace Data
         public long? FacebookId { get; set; }
         public string PictureUrl { get; set; }
         public string AccessToken { get; set; }
+        public long NameIdentifier { get; set; }
     }
 }

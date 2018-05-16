@@ -10,6 +10,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
+using System.IO;
+using Microsoft.Extensions.Primitives;
+using System.Text;
+using System.Net;
+using Newtonsoft.Json.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using Newtonsoft.Json;
 
 namespace Api.Controllers
 {
@@ -44,13 +52,38 @@ namespace Api.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("auth/facebook")]
-        public IActionResult FacebookLogin(string returnUrl = null)
-        {            
+        public async Task<IActionResult> FacebookLogin(string returnUrl = null)
+        {
+            await _signInManager.SignOutAsync();
+            string baseUrl = $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}";
+            System.Diagnostics.Debug.WriteLine(baseUrl + (Url.Action("FacebookLoginCallback", "Account")));
             // Request a redirect to the external login provider.
-            var redirectUrl = Url.Action("auth/facebook/callback", "users", new { returnUrl });
-            System.Diagnostics.Debug.WriteLine(redirectUrl);
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties("Facebook", redirectUrl);
-            return Challenge(properties, "Facebook");
+            var authProperties = new AuthenticationProperties
+            {
+                RedirectUri = baseUrl + (Url.Action("FacebookLoginCallback", "Account")),
+                Items = { new KeyValuePair<string, string>("LoginProvider", "Facebook") }
+            };
+            return Challenge(authProperties, "Facebook");
+        }
+
+        private async Task<string> GetAccessToken(string url)
+        {
+            var _httpClient = new HttpClient
+            {
+                BaseAddress = new Uri("https://graph.facebook.com/v3.0/")
+            };
+            _httpClient.DefaultRequestHeaders
+                .Accept
+                .Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            var response = await _httpClient.GetAsync(url);
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            var result = await response.Content.ReadAsStringAsync();
+            var data = (JObject)JsonConvert.DeserializeObject(result);
+            string access_token = data["access_token"].Value<string>();
+            return access_token;
         }
 
 
@@ -59,36 +92,30 @@ namespace Api.Controllers
         [Route("signin-facebook")]
         public async Task<IActionResult> FacebookLoginCallback(string returnUrl = null, string remoteError = null)
         {
-            if (remoteError != null)
+            string codeString = HttpContext.Request.Query["code"].ToString();
+            string stateString = HttpContext.Request.Query["state"].ToString();
+            if (codeString == null || stateString == null || codeString == "" || stateString == "")
             {
-                ErrorMessage = $"Error from external provider: {remoteError}";                
-                return RedirectToAction(nameof(Index));
+                _logger?.LogInformation($"Impossible to connect. Code: { codeString } and state { stateString } are invalid");
+                return RedirectToAction("Index");
             }
-            var info = await _signInManager.GetExternalLoginInfoAsync();
-            if (info == null)
+            string url = "https://graph.facebook.com/v3.0/oauth/access_token?client_id=";
+            url += "373455309833356&redirect_uri=https://localhost:44307/signin-facebook&client_secret=2e0e737ad1a89d0f251ebfaebfd3f76c";
+            url += "&code=" + codeString;
+
+            string accessToken = await GetAccessToken(url);
+
+            if (accessToken == null || accessToken == "")
             {
-                return RedirectToAction(nameof(Index));
+                _logger?.LogInformation($"Impossible to connect. Access Token: { accessToken } is invalid");
+                return RedirectToAction("Index");
             }
 
-            // Sign in the user with this external login provider if the user already has a login.
-            var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
-            if (result.Succeeded)
-            {
-                _logger.LogInformation("User logged in with {Name} provider.", info.LoginProvider);
-                return RedirectToLocal(returnUrl);
-            }
-            if (result.IsLockedOut)
-            {
-                return RedirectToAction(nameof(Lockout));
-            }
-            else
-            {
-                // If the user does not have an account, then ask the user to create an account.
-                ViewData["ReturnUrl"] = returnUrl;
-                ViewData["LoginProvider"] = info.LoginProvider;
-                var email = info.Principal.FindFirstValue(ClaimTypes.Email);
-                return View("ExternalLogin");
-            }
+            var client = new Facebook.Client.FacebookClient();
+            var service = new Facebook.Service.FacebookService(client);
+            var account = await service.GetAccountAsync(accessToken);
+       
+            return Redirect("http://google.com?email=" + account.Email);
         }
 
         [HttpPost]

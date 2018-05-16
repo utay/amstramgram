@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.Rewrite;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Facebook;
+using Microsoft.AspNetCore.Authentication.Facebook;
 //using Core.Logic;
 
 namespace Api
@@ -95,18 +97,31 @@ namespace Api
             var sp = services.BuildServiceProvider();
             services.AddScoped<ISchema>(_ => new AmstramgramSchema(type => (GraphType)sp.GetService(type)) { Query = sp.GetService<AmstramgramQuery>(), Mutation = sp.GetService<AmstramgramMutation>() });
 
-            services.AddAuthentication(
-                options => options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme);
+            services.ConfigureApplicationCookie(options => options.LoginPath = "/users/sign_in");
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                     .AddEntityFrameworkStores<AmstramgramContext>()
                     .AddDefaultTokenProviders();
 
-            services.AddAuthentication().AddFacebook(facebookOptions =>
+            services.AddAuthentication(options =>
+            {
+                options.DefaultChallengeScheme = FacebookDefaults.AuthenticationScheme;
+            })
+            .AddCookie()
+            .AddFacebook(facebookOptions =>
             {
                 facebookOptions.AppId = Configuration["Facebook:AppId"];
                 facebookOptions.AppSecret = Configuration["Facebook:AppSecret"];
+                facebookOptions.BackchannelHttpHandler = new FacebookBackChannelHandler();
+                facebookOptions.Scope.Add("email");
+                facebookOptions.SaveTokens = true;
+                facebookOptions.TokenEndpoint = "https://graph.facebook.com/v3.0/oauth/access_token";
+                facebookOptions.UserInformationEndpoint = "https://graph.facebook.com/v3.0/me?fields=id,name,email,first_name,last_name";
             });
+
+
+            services.AddDistributedMemoryCache();
+            services.AddSession();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -120,14 +135,16 @@ namespace Api
                 options => options.WithOrigins("http://localhost:8080", "http://localhost:5000").AllowAnyMethod().AllowAnyHeader().AllowCredentials()
             );
 
+            app.UseSession();
+            
             app.UseStaticFiles();
             app.UseMvc();
 
+            app.UseAuthentication();
+
             var optionsRewrite = new RewriteOptions()
                               .AddRedirectToHttps(StatusCodes.Status301MovedPermanently, 63423);
-            app.UseRewriter(optionsRewrite);
-
-
+            app.UseRewriter(optionsRewrite);           
             // db.EnsureSeedData();
         }
     }
