@@ -5,6 +5,10 @@ export async function getLikesAndComments(id) {
     picture(id: ${id}) {
       comments {
         text
+        user {
+          nickname
+        }
+        createdAt
       }
       likes {
         createdAt

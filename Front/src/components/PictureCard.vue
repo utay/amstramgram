@@ -16,32 +16,43 @@
         icon="el-icon-circle-check"
         style="">{{ likesPhrase }}</el-button>
       <div>
-        <span>{{ picture.User.Nickname }} </span>
+        <a href="#">
+          <span>{{ picture.User.Nickname }} </span>
+        </a>
         <span class="legend">{{ picture.Description }} </span>
-        <el-button v-for="(tag, i) in picture.Tags"
+        <el-button class="tags"
+          v-for="(tag, i) in picture.Tags"
           :key="i"
           type="text">#{{ tag.Text }}</el-button>
+        <span class="time pull-right">{{ picture.CreatedAt | fromNow }}</span>
       </div>
-      <div v-for="(comment, i) of comments"
+      <div v-if="i < 5 || showMore"
+        v-for="(comment, i) of orderedComments"
         :key="i">
-        <span>{{ i }} </span>
-        <span class="legend">{{ comment }} </span>
+        <a href="#">
+          <span> {{ comment.user.nickname }}</span>
+        </a>
+        <span class="legend"> {{ comment.text }} </span>
+        <span class="time pull-right">{{ comment.createdAt | fromNow }}</span>
       </div>
       <el-button type="text"
+        v-if="!showMore"
+        @click="showMore = true"
         class="button">
-        Show comments
+        Show more comments..
       </el-button>
-      <div class="time">{{ fromNow }}</div>
     </div>
-    <el-input type="text"
-      :autosize="{ minRows: 1, maxRows: 4}"
-      placeholder="Add a comment"
-      v-model="comment">
-      <el-button slot="append"
-        @click="createComment"
-        type="primary"
-        icon="el-icon-edit-outline"></el-button>
-    </el-input>
+    <div @keyup.enter="createComment">
+      <el-input type="text"
+        :autosize="{ minRows: 1, maxRows: 4}"
+        placeholder="Add a comment"
+        v-model="comment">
+        <el-button slot="append"
+          @click="createComment"
+          type="primary"
+          icon="el-icon-edit-outline"></el-button>
+      </el-input>
+    </div>
   </el-card>
 </template>
 
@@ -49,6 +60,7 @@
 import moment from "moment";
 import { getLikesAndComments, createComment } from "@/api/picture";
 import store from "@/store";
+import _ from "lodash";
 
 export default {
   props: {
@@ -59,8 +71,15 @@ export default {
     return {
       likes: [],
       comments: [],
-      comment: ""
+      comment: "",
+      showMore: false
     };
+  },
+
+  filters: {
+    fromNow(date) {
+      return moment.unix(date).fromNow();
+    }
   },
 
   methods: {
@@ -70,9 +89,8 @@ export default {
         this.picture.Id,
         store.getters.currentUser.id
       );
-      await this.refreshPicture()
-      this.comment = ""
-      
+      await this.refreshPicture();
+      this.comment = "";
     },
     async refreshPicture() {
       const response = await getLikesAndComments(this.picture.Id);
@@ -82,12 +100,12 @@ export default {
   },
 
   async created() {
-    await refreshPicture()
+    await this.refreshPicture();
   },
 
   computed: {
-    fromNow() {
-      return moment.unix(this.picture.CreatedAt).fromNow();
+    orderedComments() {
+      return _.orderBy(this.comments, ["createdAt"], ["asc"]);
     },
 
     likesPhrase() {
@@ -98,6 +116,15 @@ export default {
 </script>
 
 <style scoped>
+.pull-right{
+    float: right;
+}
+
+.tags {
+  padding-bottom: 5px;
+  padding-top: 5px;
+}
+
 .el-button + .el-button {
   margin-left: 2px;
 }
