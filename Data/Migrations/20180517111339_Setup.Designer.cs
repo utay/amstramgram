@@ -11,7 +11,7 @@ using System;
 namespace Data.Migrations
 {
     [DbContext(typeof(AmstramgramContext))]
-    [Migration("20180510121051_Setup")]
+    [Migration("20180517111339_Setup")]
     partial class Setup
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,17 +47,20 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Core.Models.Like", b =>
                 {
-                    b.Property<long>("UserId");
-
-                    b.Property<long>("PictureId");
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("CreatedAt");
 
-                    b.Property<long>("Id");
+                    b.Property<long>("PictureId");
 
-                    b.HasKey("UserId", "PictureId");
+                    b.Property<long>("UserId");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("PictureId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Likes");
                 });

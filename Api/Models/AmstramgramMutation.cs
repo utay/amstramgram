@@ -16,7 +16,7 @@ namespace Api.Models
         {
             Name = "Mutation";
 
-            AlgoliaClient client = new AlgoliaClient("II4W4PPGW1", "412763c2f87e6e3f95ec9ee84003d2ee");
+            AlgoliaClient client = new AlgoliaClient("A71NP8C36C", "ac1a68327b713553e3d21307968adab7");
             Index usersIndex = client.InitIndex("Amstramgram_users");
             Index picturesIndex = client.InitIndex("Amstramgram_pictures");
             Index tagsIndex = client.InitIndex("Amstramgram_tags");
@@ -100,7 +100,7 @@ namespace Api.Models
                     {
                         return null;
                     }
-                    if (likeRepository.Find(data.UserId, data.PictureId).Result != null)
+                    if (likeRepository.Find(data.UserId, data.PictureId) != null)
                     {
                         return null;
                     }
@@ -124,13 +124,12 @@ namespace Api.Models
                     {
                         return null;
                     }
-                    var like = likeRepository.Find(data.UserId, data.PictureId).Result;
+                    var like = likeRepository.Find(data.UserId, data.PictureId);
                     if (like == null)
                     {
                         return null;
                     }
-                    likeRepository.Detach(like);
-                    likeRepository.Delete(data.UserId, data.PictureId);
+                    likeRepository.Delete(like);
                     likeRepository.SaveChanges();
                     return mapper.Map<Like>(like);
                 }
@@ -179,8 +178,7 @@ namespace Api.Models
                     {
                         return null;
                     }
-                    userFollowerRepository.Detach(follower);
-                    userFollowerRepository.Delete(data.UserId, data.FollowerId);
+                    userFollowerRepository.Delete(follower);
                     userFollowerRepository.SaveChanges();
                     return mapper.Map<UserFollower>(follower);
                 }

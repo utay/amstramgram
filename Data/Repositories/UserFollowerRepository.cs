@@ -20,11 +20,5 @@ namespace Data.Repositories
         {
             return _db.Set<UserFollower>().FindAsync(userId, followerId);
         }
-
-        public void Delete(long userId, long followerId)
-        {
-            var entity = new UserFollower { UserId = userId, FollowerId = followerId };
-            _db.Set<UserFollower>().Remove(entity);
-        }
     }
 }

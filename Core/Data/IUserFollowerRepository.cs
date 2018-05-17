@@ -6,6 +6,5 @@ namespace Core.Data
     public interface IUserFollowerRepository : IBaseRepository<UserFollower, long>
     {
         Task<UserFollower> Find(long userId, long followerId);
-        void Delete(long userId, long followerId);
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Core.Data;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Data.Repositories
 {
@@ -15,15 +16,12 @@ namespace Data.Repositories
         {
         }
 
-        public Task<Like> Find(long userId, long pictureId)
+        public Like Find(long userId, long pictureId)
         {
-            return _db.Set<Like>().FindAsync(userId, pictureId);
-        }
-
-        public void Delete(long userId, long pictureId)
-        {
-            var entity = new Like { UserId = userId, PictureId = pictureId };
-            _db.Set<Like>().Remove(entity);
+            return _db.Set<Like>()
+                .Where(l => l.UserId.Equals(userId) 
+                    && l.PictureId.Equals(pictureId))
+                .FirstOrDefault();
         }
 
         public async Task<User> GetUser(long id)

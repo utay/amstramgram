@@ -43,7 +43,10 @@ export const getAllCommentsAndLikes = async (id) => {
         }
         likes {
           createdAt
-      
+          user {
+            id
+            nickname
+          }  
         }
       }
     }

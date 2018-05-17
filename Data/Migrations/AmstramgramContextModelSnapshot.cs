@@ -46,17 +46,20 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Core.Models.Like", b =>
                 {
-                    b.Property<long>("UserId");
-
-                    b.Property<long>("PictureId");
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("CreatedAt");
 
-                    b.Property<long>("Id");
+                    b.Property<long>("PictureId");
 
-                    b.HasKey("UserId", "PictureId");
+                    b.Property<long>("UserId");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("PictureId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Likes");
                 });

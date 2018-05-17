@@ -44,8 +44,8 @@ import PictureCard from "@/components/PictureCard.vue";
 import { createFromAlgoliaCredentials } from "vue-instantsearch";
 
 const searchStore = createFromAlgoliaCredentials(
-  "II4W4PPGW1",
-  "633ea05725cb749e80a21ba50e779a9c"
+  "A71NP8C36C",
+  "2251b2c1751fee3ffef49c37eedf28d4"
 );
 
 export default {

@@ -113,9 +113,10 @@ export default {
 
   computed: {
     liked() {
-      return !!this.likes.find(
-        like => like.user.id === this.$store.state.currentUser.id
-      );
+      if (!this.$store.getters.isConnected) return false;
+      return !!this.likes.find(like => {
+        return like.user.id === this.$store.state.currentUser.id;
+      });
     },
     orderedComments() {
       return _.orderBy(this.comments, ["createdAt"], ["asc"]);
@@ -150,6 +151,7 @@ export default {
     },
     async refreshPicture() {
       const response = await getLikesAndComments(this.picture.Id);
+      console.log(response);
       this.likes = response.picture.likes;
       this.comments = response.picture.comments;
     }

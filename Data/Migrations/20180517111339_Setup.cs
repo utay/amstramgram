@@ -115,14 +115,15 @@ namespace Data.Migrations
                 name: "Likes",
                 columns: table => new
                 {
-                    UserId = table.Column<long>(nullable: false),
-                    PictureId = table.Column<long>(nullable: false),
-                    CreatedAt = table.Column<string>(nullable: true),
                     Id = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    CreatedAt = table.Column<string>(nullable: true),
+                    PictureId = table.Column<long>(nullable: false),
+                    UserId = table.Column<long>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Likes", x => new { x.UserId, x.PictureId });
+                    table.PrimaryKey("PK_Likes", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Likes_Pictures_PictureId",
                         column: x => x.PictureId,
@@ -176,6 +177,11 @@ namespace Data.Migrations
                 name: "IX_Likes_PictureId",
                 table: "Likes",
                 column: "PictureId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Likes_UserId",
+                table: "Likes",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Pictures_UserId",

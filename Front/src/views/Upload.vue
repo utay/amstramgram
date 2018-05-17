@@ -70,7 +70,7 @@
         type="danger"
         round
         icon="el-icon-check"
-        @click=" upload()">{{ 'Upload' }}</el-button>
+        @click=" upload">{{ 'Upload' }}</el-button>
     </el-col>
   </el-row>
 </template>

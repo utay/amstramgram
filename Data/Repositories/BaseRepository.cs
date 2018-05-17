@@ -72,10 +72,8 @@ namespace Data.Repositories
             _db.Set<TEntity>().AddRange(entities);
         }
 
-        public virtual void Delete(TKey id)
+        public virtual void Delete(TEntity entity)
         {
-            var entity = new TEntity { Id = id };
-            _db.Set<TEntity>().Attach(entity);
             _db.Set<TEntity>().Remove(entity);
         }
 
@@ -88,11 +86,6 @@ namespace Data.Repositories
         {
             _db.Set<TEntity>().Attach(entity);
             _db.Entry(entity).State = EntityState.Modified;
-        }
-
-        public void Detach(TEntity entity)
-        {
-            _db.Entry(entity).State = EntityState.Detached;
         }
     }
 }

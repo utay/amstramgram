@@ -63,7 +63,9 @@ namespace Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             // likes
-            modelBuilder.Entity<Like>().HasKey(l => new { l.UserId, l.PictureId });
+            modelBuilder.Entity<Like>().HasKey(l => l.Id);
+
+            modelBuilder.Entity<Like>().Property(c => c.Id).ValueGeneratedOnAdd();
 
             modelBuilder.Entity<Like>()
                 .HasOne(l => l.Picture)
