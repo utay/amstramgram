@@ -32,5 +32,11 @@ namespace Data.Repositories
             var user = await Get(id, "Following");
             return user.Following;
         }
+
+        public async Task<User> GetFromEmail(string email)
+        {
+            User user = (await GetAll()).Find(u => u.Email == email);
+            return user;
+        }
     }
 }

@@ -162,8 +162,16 @@ namespace Api.Controllers
                 using (var db = new AmstramgramContext())
                 {
                     Data.Repositories.UserRepository userRepo = new Data.Repositories.UserRepository(db, null);
-                    userDB = userRepo.Add(userDB);
-                    userRepo.SaveChanges();
+                    var userInDb = await userRepo.GetFromEmail(userDB.Email);
+                    if (userInDb == null)
+                    {
+                        userDB = userRepo.Add(userDB);
+                        userRepo.SaveChanges();
+                    }
+                    else
+                    {
+                        userDB = userInDb;
+                    }
                 }
             }
             catch (Exception e)
@@ -175,7 +183,7 @@ namespace Api.Controllers
             _logger?.LogInformation("User connected");
             HttpContext.Session.Set("currentToken", Encoding.UTF8.GetBytes(accessToken));
             HttpContext.Session.Set("currentUserId", Encoding.UTF8.GetBytes(userDB.Id.ToString()));
-            return RedirectToLocal("/");
+            return RedirectToLocal("/feed");
         }
 
         [HttpPost]

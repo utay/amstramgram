@@ -52,6 +52,7 @@ namespace Data
             modelBuilder.Entity<User>()
                 .HasMany(u => u.Pictures)
                 .WithOne(p => p.User);
+            modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
 
             // pictures
             modelBuilder.Entity<Picture>().HasKey(p => p.Id);
