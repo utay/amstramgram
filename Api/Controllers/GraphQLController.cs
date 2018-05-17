@@ -6,6 +6,9 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Api.Models;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Data;
 
 namespace Api.Controllers
 {
@@ -16,11 +19,19 @@ namespace Api.Controllers
         private ISchema _schema { get; set; }
         private readonly ILogger _logger;
 
-        public GraphQLController(IDocumentExecuter documentExecuter, ISchema schema, ILogger<GraphQLController> logger)
+        private readonly UserManager<ApplicationUser> _manager;
+
+        public GraphQLController(IDocumentExecuter documentExecuter, ISchema schema, ILogger<GraphQLController> logger, UserManager<ApplicationUser> manager)
         {
             _documentExecuter = documentExecuter;
             _schema = schema;
             _logger = logger;
+            _manager = manager;
+        }
+
+        private async Task<ApplicationUser> GetCurrentUser()
+        {
+            return await _manager.GetUserAsync(HttpContext.User);
         }
 
         [HttpGet]
@@ -33,6 +44,7 @@ namespace Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] GraphQLQuery query)
         {
+            await Helper.AppHttpContext.HttpContext.Session.LoadAsync();
             if (query == null) { throw new ArgumentNullException(nameof(query)); }
 
             var executionOptions = new ExecutionOptions { Schema = _schema, Query = query.Query };

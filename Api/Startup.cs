@@ -20,6 +20,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Facebook;
 using Microsoft.AspNetCore.Authentication.Facebook;
+using Api.Helper;
+using System;
 //using Core.Logic;
 
 namespace Api
@@ -42,15 +44,41 @@ namespace Api
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {   
+        {
 
             // Add framework services.
+
             services.AddCors();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+
+
+            services.AddDistributedSqlServerCache(options =>
+            {
+                options.ConnectionString = Configuration["ConnectionStrings:AmstramgramDatabaseConnection"];
+                options.SchemaName = "dbo";
+                options.TableName = "Session";
+            });
+
+            services.AddSession(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.IdleTimeout = TimeSpan.FromHours(5);
+            });
+
             services.AddMvc();
+
+            
             services.Configure<MvcOptions>(options =>
             {
                 options.Filters.Add(new RequireHttpsAttribute());
             });
+
+
 
             services.AddAutoMapper(typeof(Startup));
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings
@@ -97,17 +125,11 @@ namespace Api
             var sp = services.BuildServiceProvider();
             services.AddScoped<ISchema>(_ => new AmstramgramSchema(type => (GraphType)sp.GetService(type)) { Query = sp.GetService<AmstramgramQuery>(), Mutation = sp.GetService<AmstramgramMutation>() });
 
-            services.ConfigureApplicationCookie(options => options.LoginPath = "/users/sign_in");
-
             services.AddIdentity<ApplicationUser, IdentityRole>()
                     .AddEntityFrameworkStores<AmstramgramContext>()
                     .AddDefaultTokenProviders();
 
-            services.AddAuthentication(options =>
-            {
-                options.DefaultChallengeScheme = FacebookDefaults.AuthenticationScheme;
-            })
-            .AddCookie()
+            services.AddAuthentication()
             .AddFacebook(facebookOptions =>
             {
                 facebookOptions.AppId = Configuration["Facebook:AppId"];
@@ -118,10 +140,6 @@ namespace Api
                 facebookOptions.TokenEndpoint = "https://graph.facebook.com/v3.0/oauth/access_token";
                 facebookOptions.UserInformationEndpoint = "https://graph.facebook.com/v3.0/me?fields=id,name,email,first_name,last_name";
             });
-
-
-            services.AddDistributedMemoryCache();
-            services.AddSession();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -138,13 +156,15 @@ namespace Api
             app.UseSession();
             
             app.UseStaticFiles();
+
             app.UseMvc();
 
-            app.UseAuthentication();
+            app.UseCookiePolicy();
 
             var optionsRewrite = new RewriteOptions()
                               .AddRedirectToHttps(StatusCodes.Status301MovedPermanently, 63423);
-            app.UseRewriter(optionsRewrite);           
+            app.UseRewriter(optionsRewrite);
+            AppHttpContext.Configure(app.ApplicationServices.GetRequiredService<IHttpContextAccessor>());
             // db.EnsureSeedData();
         }
     }

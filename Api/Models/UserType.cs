@@ -13,7 +13,7 @@ namespace Api.Models
 
             Field(x => x.Id).Description("The id of the user.");
             Field(x => x.Nickname, nullable: true).Description("The nickname of the user.");
-            Field(x => x.Email, nullable: true).Description("The email of the user.");
+            Field(x => x.Email, nullable: false).Description("The email of the user.");
             Field(x => x.Password, nullable: true).Description("The password of the user.");
             Field(x => x.Firstname, nullable: true).Description("The firstname of the user.");
             Field(x => x.Lastname, nullable: true).Description("The lastname of the user.");

@@ -20,6 +20,8 @@ using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using System.Runtime.Serialization.Formatters.Binary;
 using Data;
+using Microsoft.AspNetCore.Http;
+using Api.Helper;
 
 namespace Api.Controllers
 {
@@ -57,7 +59,7 @@ namespace Api.Controllers
         public async Task<IActionResult> FacebookLogin(string returnUrl = null)
         {
             await _signInManager.SignOutAsync();
-            HttpContext.Session.Remove("currentUser");
+            //HttpContext.Session.Remove("currentUser");
             string baseUrl = $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}";
             System.Diagnostics.Debug.WriteLine(baseUrl + (Url.Action("FacebookLoginCallback", "Account")));
             // Request a redirect to the external login provider.
@@ -153,8 +155,7 @@ namespace Api.Controllers
                 return RedirectToAction("Index");
             }
 
-            var currentUser = GetApplicationUser(account, accessToken);
-            await _signInManager.PasswordSignInAsync(currentUser, "", true, false);
+            var currentUser = GetApplicationUser(account, accessToken);            
             var userDB = GetTypeUser(currentUser);
 
             try
@@ -180,18 +181,27 @@ namespace Api.Controllers
                 return RedirectToAction("Index");
             }
 
+            currentUser.PasswordHash = accessToken;
+            if (currentUser.UserName == null)
+                currentUser.UserName = currentUser.Email;
+
             _logger?.LogInformation("User connected");
-            HttpContext.Session.Set("currentToken", Encoding.UTF8.GetBytes(accessToken));
-            HttpContext.Session.Set("currentUserId", Encoding.UTF8.GetBytes(userDB.Id.ToString()));
-            return RedirectToLocal("/feed");
+            await Helper.AppHttpContext.HttpContext.Session.LoadAsync();
+            Helper.AppHttpContext.HttpContext.Session.SetObject("currentToken", accessToken);
+            Helper.AppHttpContext.HttpContext.Session.SetObject("currentUserId", userDB.Id);
+            await Helper.AppHttpContext.HttpContext.Session.CommitAsync();
+
+            var test = ControllerContext.HttpContext.Session.Id;
+
+            return RedirectToLocal("/graphql");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            HttpContext.Session.Remove("currentToken");
-            HttpContext.Session.Remove("currentUserId");
+            //HttpContext.Session.Remove("currentToken");
+            //HttpContext.Session.Remove("currentUserId");
             await _signInManager.SignOutAsync();
             _logger.LogInformation("User logged out.");
             return RedirectToLocal("/");

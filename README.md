@@ -28,6 +28,10 @@ Migrate
 
 `cd Data && dotnet ef database update`
 
+Session store
+
+`cd Api && dotnet sql-cache create 'Server=localhost;Database=master;User=sa;Password=Strong(!)Password;' "dbo" "Session"`
+
 ## Run
 
 Start the API
