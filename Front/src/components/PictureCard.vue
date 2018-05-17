@@ -42,7 +42,7 @@
           :key="i"
           class="tags"
           type="text">
-          #{{ tag.text }}
+          #{{ tag.Text }}
         </el-button>
         <span class="time pull-right">{{ pictureData.createdAt | fromNow }}</span>
       </div>
