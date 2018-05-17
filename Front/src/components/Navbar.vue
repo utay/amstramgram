@@ -37,8 +37,8 @@
           </el-badge>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item 
-              v-for="notification of notifications"
-              :key="notification.createdAt">
+              v-for="(notification, i) of notifications"
+              :key="i">
               {{ notification.type }} - {{ notification.createdAt | fromNow }}
             </el-dropdown-item>
           </el-dropdown-menu>
