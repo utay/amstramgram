@@ -26,7 +26,8 @@
           class="fas fa-cog fa-2x"/>
       </el-menu-item>
       <el-menu-item index="5">
-        <el-dropdown>
+        <el-dropdown
+          @command="e => $router.push({name: 'picture', params: { id: e}})">
           <el-badge 
             :value="100"
             :max="10"
@@ -35,11 +36,34 @@
               style="font-size: 1.2rem"
               class="fas fa-heart fa-2x"/>
           </el-badge>
-          <el-dropdown-menu slot="dropdown">
+          <el-dropdown-menu
+            slot="dropdown">
             <el-dropdown-item 
               v-for="(notification, i) of notifications"
-              :key="i">
-              {{ notification.type }} - {{ notification.createdAt | fromNow }}
+              :key="i"
+              :command="notification.picture.id">
+              <div
+                class="center-vertically">
+                <div 
+                  :style="{ 'background-image': 'url(' + notification.user.picture + ')' }"
+                  class="round-icon flex" />
+                <div
+                  class="flex nickname header black-text">
+                  <div>
+                    <span class="nickname-text">{{ notification.user.nickname }}</span>
+                    <span>
+                      {{ notification.type !== "comment" ? " liked " 
+                      : " commented : " }}
+                    </span>
+                    <span 
+                      v-if="notification.type === 'comment'">
+                      "<span class="nickname-text">{{ notification.text }}</span>" on 
+                    </span>
+                    your picture, 
+                    <span class="time">{{ notification.createdAt | fromNow }}</span>
+                  </div>
+                </div>
+              </div>
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -107,6 +131,7 @@ export default {
           this.$router.push({ name: "settings" });
           break;
         case "5":
+          console.log("tata")
           break;
         case "6":
           this.$router.push({ name: "profile" });
@@ -122,6 +147,60 @@ export default {
 </script>
 
 <style scoped>
+.nickname {
+  text-decoration: none;
+  padding-left: 5px;
+  color: rgb(232, 0, 63);
+}
+
+.black-text {
+  color: black;
+}
+
+.nickname-text {
+  color: rgb(232, 0, 63);
+}
+
+.time {
+  color: rgb(232, 0, 63);
+}
+
+.center-vertically {
+  display: flex;
+  align-items: center;
+  /* flex-direction: column; */
+  justify-content: flex-start;
+}
+
+.flex {
+  display: flex;
+}
+
+.pull-right {
+  float: right;
+}
+
+.pull-left {
+  float: left;
+}
+
+.round-icon {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+}
+
+.el-dropdown-menu__item {
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
 .el-menu-item:nth-child(3) {
   position: absolute;
   right: 180px;

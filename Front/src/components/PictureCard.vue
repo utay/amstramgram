@@ -1,23 +1,26 @@
 <template>
   <el-card 
+    v-if="pictureData"
     :style="`
     margin: 0 auto;
     width: 40%; 
     margin-bottom: 20px; 
-    border-top: 2px solid #${picture.Color}`"
+    border-top: 2px solid #${pictureData.color}`"
     :body-style="{'text-align': 'left'}">
     <div
       slot="header"
       class="center-vertically">
       <div 
-        :style="{ 'background-image': 'url(' + picture.User.Picture + ')' }"
+        :style="{ 'background-image': 'url(' + pictureData.user.picture + ')' }"
         class="round-icon flex" />
       <a 
         href="#"
-        class="flex nickname header">{{ picture.User.Nickname }}</a>
+        class="flex nickname header">
+        {{ pictureData.user.nickname }}
+      </a>
     </div>
     <img 
-      :src="picture.Image"
+      :src="pictureData.image"
       class="image">
     <div style="padding: 14px;">
       <el-button 
@@ -31,17 +34,17 @@
         <a 
           href="#" 
           class="nickname">
-          <span>{{ picture.User.Nickname }}</span>
+          <span>{{ pictureData.user.nickname }}</span>
         </a>
-        <span class="legend">{{ picture.Description }} </span>
+        <span class="legend">{{ pictureData.description }} </span>
         <el-button 
-          v-for="(tag, i) in picture.Tags"
+          v-for="(tag, i) in pictureData.tags"
           :key="i"
           class="tags"
           type="text">
-          #{{ tag.Text }}
+          #{{ tag.text }}
         </el-button>
-        <span class="time pull-right">{{ picture.CreatedAt | fromNow }}</span>
+        <span class="time pull-right">{{ pictureData.createdAt | fromNow }}</span>
       </div>
       <div 
         v-for="(comment, i) of orderedComments"
@@ -56,7 +59,7 @@
         <span class="time pull-right">{{ comment.createdAt | fromNow }}</span>
       </div>
       <el-button 
-        v-if="orderedComments.length > 0 && !showMore"
+        v-if="orderedComments.length > 5 && !showMore"
         type="text"
         class="button"
         @click="showMore = true">
@@ -85,7 +88,8 @@ import {
   getLikesAndComments,
   createComment,
   createLike,
-  deleteLike
+  deleteLike,
+  getPicture
 } from "@/api/picture";
 import _ from "lodash";
 
@@ -96,6 +100,10 @@ export default {
     }
   },
   props: {
+    id: {
+      type: [String, Number],
+      default: null
+    },
     picture: {
       type: Object,
       default: null
@@ -107,7 +115,8 @@ export default {
       likes: [],
       comments: [],
       comment: "",
-      showMore: false
+      showMore: false,
+      pictureData: null
     };
   },
 
@@ -118,6 +127,7 @@ export default {
         return like.user.id === this.$store.state.currentUser.id;
       });
     },
+
     orderedComments() {
       return _.orderBy(this.comments, ["createdAt"], ["asc"]);
     },
@@ -128,29 +138,44 @@ export default {
   },
 
   async created() {
+    if (this.id) {
+      const res = await getPicture(+this.id);
+      this.pictureData = res.picture;
+    } else {
+      this.pictureData = _.transform(this.picture, (result, val, key) => {
+        result[key.toLowerCase()] = val;
+      });
+      this.pictureData.user = _.transform(
+        this.pictureData.user,
+        (result, val, key) => {
+          result[key.toLowerCase()] = val;
+        }
+      );
+    }
+
     await this.refreshPicture();
   },
 
   methods: {
     async toggleLikePicture() {
       if (!this.liked) {
-        await createLike(this.picture.Id, this.$store.state.currentUser.id);
+        await createLike(this.pictureData.id, this.$store.state.currentUser.id);
       } else {
-        await deleteLike(this.picture.Id, this.$store.state.currentUser.id);
+        await deleteLike(this.pictureData.id, this.$store.state.currentUser.id);
       }
       await this.refreshPicture();
     },
     async createComment() {
       await createComment(
         this.comment,
-        this.picture.Id,
+        this.pictureData.id,
         this.$store.state.currentUser.id
       );
       await this.refreshPicture();
       this.comment = "";
     },
     async refreshPicture() {
-      const response = await getLikesAndComments(this.picture.Id);
+      const response = await getLikesAndComments(this.pictureData.id);
       console.log(response);
       this.likes = response.picture.likes;
       this.comments = response.picture.comments;

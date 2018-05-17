@@ -21,6 +21,40 @@ export async function getLikesAndComments(id) {
   }`);
 }
 
+export async function getPicture(id) {
+  return query(`{
+    picture(id: ${id}) {
+      id
+      image
+      description
+      color
+      createdAt
+      updatedAt
+      user {
+        nickname
+        picture
+      }
+      tags {
+        text
+      }
+      comments {
+        text
+        user {
+          nickname
+        }
+        createdAt
+      }
+      likes {
+        createdAt
+        user {
+          id
+          nickname
+        }
+      }
+    }
+  }`);
+}
+
 export const createComment = async (comment, pictureId, userId) => {
   return query(`mutation {
     createComment(comment: {
@@ -31,7 +65,7 @@ export const createComment = async (comment, pictureId, userId) => {
       id
     }
   }`);
-}
+};
 
 export const createLike = async (pictureId, userId) => {
   return query(`mutation {
@@ -42,7 +76,7 @@ export const createLike = async (pictureId, userId) => {
       createdAt
     }
   }`);
-}
+};
 
 export const deleteLike = async (pictureId, userId) => {
   return query(`mutation {
@@ -53,7 +87,7 @@ export const deleteLike = async (pictureId, userId) => {
       createdAt
     }
   }`);
-}
+};
 
 export async function createPicture(data) {
   return query(`mutation {

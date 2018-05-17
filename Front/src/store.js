@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import { getUser, getAllCommentsAndLikes } from "@/api/user";
+import { getUser, getAllCommentsAndLikes, createUser } from "@/api/user";
 
 Vue.use(Vuex);
 
@@ -28,6 +28,9 @@ export default new Vuex.Store({
     },
     deleteTag(context, tag) {
       context.commit("deleteTag", tag);
+    },
+    createUser: async () => {
+      await createUser();
     },
     connectUser: async (context, userId) => {
       const { user } = await getUser(userId);

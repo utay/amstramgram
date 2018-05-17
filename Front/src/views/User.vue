@@ -1,21 +1,27 @@
 <template>
   <div v-if="!isLoading">
-    <el-row :gutter="10"
+    <el-row 
+      :gutter="10"
       style="width: 50%; margin: 0 auto; padding-bottom: 25px"
       justify="center">
       <el-col :span="8">
-        <div :style="{ 'background-image': 'url(' + user.picture+ ')' }"
+        <div 
+          :style="{ 'background-image': 'url(' + user.picture+ ')' }"
           class="round-icon" />
       </el-col>
       <el-col :span="16">
-        <el-card :body-style='{"text-align": "left"}'>
-          <div slot="header"
+        <el-card
+          :body-style="{'text-align': 'left'}">
+          <div
+            slot="header"
             style="text-align: left;">
             <span>{{ user.firstname }} {{ user.lastname }}</span>
-            <el-button type="primary"
+            <el-button 
+              type="primary"
               style="float: right; padding: 4px 0"
-              icon="el-icon-back"></el-button>
-            <el-button v-if="myProfile"
+              icon="el-icon-back"/>
+            <el-button
+              v-if="myProfile"
               style="float: right; padding: 3px 10px"
               type="text">Update profile</el-button>
           </div>
@@ -30,14 +36,18 @@
         </el-card>
       </el-col>
     </el-row>
-    <el-row :gutter="10"
+    <el-row
+      :gutter="10"
       style="width: 50%; margin: 0 auto;"
       justify="center">
-      <el-col :span="8"
+      <el-col
         v-for="(picture, i) in user.pictures"
+        :span="8"
         :key="i">
-        <img :src="picture.image"
-          class="image">
+        <img
+          :src="picture.image"
+          class="image"
+          @click="$router.push({name: 'picture', params: { id: picture.id}})">
       </el-col>
     </el-row>
   </div>
@@ -48,7 +58,10 @@ import { getUser } from "@/api/user";
 
 export default {
   props: {
-    id: Number
+    id: {
+      type: Number,
+      default: 1,
+    }
   },
 
   data() {

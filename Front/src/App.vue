@@ -21,6 +21,7 @@ export default {
   },
 
   async created() {
+    // store.dispatch("createUser");
     store.dispatch("connectUser", 1);
   }
 };
