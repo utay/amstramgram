@@ -1,50 +1,60 @@
 <template>
   <div>
-    <el-menu default-active="1"
+    <el-menu 
+      default-active="1"
       class="el-menu-demo"
       mode="horizontal"
       @select="handleSelect">
       <el-menu-item index="1">
-        <img :src="require('../assets/logo.png')"
+        <img 
+          :src="require('../assets/logo.png')"
           :width="25"
           :height="25"
-          style="margin-right: 5px" /> AmStramGram
+          style="margin-right: 5px" > AmStramGram
       </el-menu-item>
       <el-menu-item index="2">
         <autocomplete />
       </el-menu-item>
       <el-menu-item index="3">
-        <i style="font-size: 1.2rem"
-          class="fas fa-plus-square fa-2x"></i>
+        <i 
+          style="font-size: 1.2rem"
+          class="fas fa-plus-square fa-2x"/>
       </el-menu-item>
       <el-menu-item index="4">
-        <i style="font-size: 1.2rem"
-          class="fas fa-cog fa-2x"></i>
+        <i 
+          style="font-size: 1.2rem"
+          class="fas fa-cog fa-2x"/>
       </el-menu-item>
       <el-menu-item index="5">
         <el-dropdown>
-          <el-badge :value="100"
+          <el-badge 
+            :value="100"
             :max="10"
             class="item">
-            <i style="font-size: 1.2rem"
-              class="fas fa-heart fa-2x"></i>
+            <i 
+              style="font-size: 1.2rem"
+              class="fas fa-heart fa-2x"/>
           </el-badge>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item v-for="notification of notifications"
+            <el-dropdown-item 
+              v-for="notification of notifications"
               :key="notification.createdAt">
-              {{ notification.type}} - {{ notification.createdAt | fromNow }}
+              {{ notification.type }} - {{ notification.createdAt | fromNow }}
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </el-menu-item>
       <el-menu-item index="6">
-        <i style="font-size: 1.2rem"
-          class="fas fa-user"></i>
+        <i 
+          style="font-size: 1.2rem"
+          class="fas fa-user"/>
       </el-menu-item>
     </el-menu>
-    <el-dialog :visible.sync="dialogVisible"
+    <el-dialog 
+      :visible.sync="dialogVisible"
       width="80%">
-      <upload v-if="dialogVisible"
+      <upload 
+        v-if="dialogVisible"
         @uploadDone="dialogVisible = false" />
     </el-dialog>
   </div>
@@ -54,25 +64,12 @@
 import moment from "moment";
 import Autocomplete from "./Autocomplete";
 import Upload from "../views/Upload.vue";
-import { getAllCommentsAndLikes } from "@/api/user";
-import store from "@/store";
+import _ from "lodash";
 
 export default {
-  data() {
-    return {
-      dialogVisible: false
-    };
-  },
-
   components: {
     Autocomplete,
     Upload
-  },
-
-  computed: {
-    notifications() {
-      return _.orderBy(this.$store.state.notifications, ["createdAt"], ["desc"]);
-   }
   },
 
   filters: {
@@ -80,9 +77,25 @@ export default {
       return moment.unix(date).fromNow();
     }
   },
+  data() {
+    return {
+      dialogVisible: false
+    };
+  },
+
+  computed: {
+    notifications() {
+      return _.orderBy(
+        this.$store.state.notifications,
+        ["createdAt"],
+        ["desc"]
+      );
+    }
+  },
 
   methods: {
-    handleSelect(key, keyPath) {
+    handleSelect(key) {
+      /*eslint-disable */
       switch (key) {
         case "2":
           break;
@@ -103,6 +116,7 @@ export default {
           break;
       }
     }
+    /*eslint-enable */
   }
 };
 </script>

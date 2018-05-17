@@ -1,59 +1,76 @@
 <template>
-  <el-row :gutter="10"
+  <el-row 
     v-loading="isLoading"
+    :gutter="10"
     style="height:500px">
-    <el-col :span="12"
+    <el-col 
+      :span="12"
       style="height:100%">
-      <div v-if="!imageUploaded"
+      <div 
+        v-if="!imageUploaded"
         class="red-border parent"
         style="height:100%"
         @click="uploadCloudinary">
         Upload a picture!
       </div>
-      <img v-else
-        style="height:100%; width: 100%"
-        :src="image.url">
+      <img 
+        v-else
+        :src="image.url"
+        style="height:100%; width: 100%">
     </el-col>
-    <el-col :span="12"
+    <el-col 
+      :span="12"
       style="height:100%">
+      <h1>Description</h1>
       <div class="red-border">
-        <el-input type="textarea"
-          placeholder="Your image description"
-          :height="5"
+        <el-input 
           :autosize="{
-             minRows: 10, maxRows: 10
-            }"
-          v-model="image.description">
-        </el-input>
+            minRows: 5, maxRows: 5
+          }"
+          v-model="image.description"
+          :height="5"
+          type="textarea"
+          placeholder="Your image description"/>
       </div>
-      <div class="red-border"
-        style="height:40%; margin-top: 5%; margin-bottom: 5%">
-        <!-- Hashtags: #{{ image.tags.join(' #') }} -->
-        <el-tag :key="tag"
+      <h2>Tags</h2>
+      <div 
+        class="red-border"
+        style="
+          height:35%;
+          margin-top: 3%;
+          margin-bottom: 3%;
+          text-align: left;
+          padding: 10px;">
+        <el-tag 
           v-for="tag in image.tags"
-          closable
+          :key="tag"
           :disable-transitions="false"
+          closable
+          type="primary"
           @close="handleClose(tag)">
-          #{{tag}}
+          #{{ tag }}
         </el-tag>
-        <el-input class="input-new-tag"
+        <el-input 
           v-if="inputVisible"
-          v-model="inputValue"
           ref="saveTagInput"
+          v-model="inputValue"
+          class="input-new-tag"
           size="mini"
           @keyup.enter.native="handleInputConfirm"
-          @blur="handleInputConfirm">
-        </el-input>
-        <el-button v-else
+          @blur="handleInputConfirm"/>
+        <el-button 
+          v-else
           class="button-new-tag"
           size="small"
           @click="showInput">
           + New Tag
         </el-button>
       </div>
-      <el-button type="danger"
-        @click="!analyzed ? analyze() : upload()"
-        round>{{ !analyzed ? 'Analyze' : 'Upload'}}</el-button>
+      <el-button 
+        type="danger"
+        round
+        icon="el-icon-check"
+        @click=" upload()">{{ 'Upload' }}</el-button>
     </el-col>
   </el-row>
 </template>
@@ -73,7 +90,6 @@ export default {
       },
       isLoading: false,
       imageUploaded: false,
-      analyzed: false,
       inputVisible: false,
       inputValue: ""
     };
@@ -86,7 +102,7 @@ export default {
 
     showInput() {
       this.inputVisible = true;
-      this.$nextTick(_ => {
+      this.$nextTick(() => {
         this.$refs.saveTagInput.$refs.input.focus();
       });
     },
@@ -101,18 +117,19 @@ export default {
     },
 
     uploadCloudinary() {
-      cloudinary.openUploadWidget(
+      window.cloudinary.openUploadWidget(
         {
           cloud_name: "dnrtun0ab",
           upload_preset: "vus5ebhc",
           multiple: false,
           cropping: "server",
           cropping_aspect_ratio: 1,
-          theme: "minimal",
+          theme: "minimal"
         },
         (error, result) => {
           this.image.url = result[0].url;
           this.imageUploaded = true;
+          this.analyze();
         }
       );
     },
@@ -127,7 +144,7 @@ export default {
         },
         {
           headers: {
-            "Ocp-Apim-Subscription-Key": "44761e6481ae47b19bf3cffc331e56a8"
+            "Ocp-Apim-Subscription-Key": "aae09155fc6749e3bfb16d3a7c898ed2"
           }
         }
       );
@@ -135,7 +152,6 @@ export default {
       this.image.description = response.data.description.captions[0].text;
       this.image.tags = response.data.tags.map(tag => tag.name);
       this.image.color = response.data.color.accentColor;
-      this.analyzed = true;
       this.isLoading = false;
     },
     async upload() {
@@ -179,21 +195,38 @@ export default {
 
 .red-border {
   border: 2px solid #ee527c;
+  border-radius: 6px;
+}
+
+.el-tag {
+  margin-bottom: 5px;
+  color: white;
+  background-color: #ee527c;
+}
+
+.el-button--danger {
+    color: #fff;
+    background-color: #ee527c;
+    border-color: #ee527c;
 }
 
 .el-tag + .el-tag {
   margin-left: 10px;
 }
+
 .button-new-tag {
   margin-left: 10px;
   height: 32px;
   line-height: 30px;
   padding-top: 0;
   padding-bottom: 0;
+  border-radius: 4px;
 }
 .input-new-tag {
   width: 90px;
   margin-left: 10px;
+  border-radius: 4px;
+  border: 1px solid #f56c6c;
   vertical-align: bottom;
 }
 </style>

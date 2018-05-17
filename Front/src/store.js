@@ -1,5 +1,5 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
+import Vue from "vue";
+import Vuex from "vuex";
 import { getUser, getAllCommentsAndLikes } from "@/api/user";
 
 Vue.use(Vuex);
@@ -18,21 +18,21 @@ export default new Vuex.Store({
       state.tags = state.tags.filter(t => t !== tag);
     },
     setUser(state, payload) {
-      state.currentUser = payload.user
-      state.notifications = payload.notifications
+      state.currentUser = payload.user;
+      state.notifications = payload.notifications;
     },
   },
   actions: {
     addTag: (context, tag) => {
-      context.commit('addTag', tag);
+      context.commit("addTag", tag);
     },
     deleteTag(context, tag) {
-      context.commit('deleteTag', tag);
+      context.commit("deleteTag", tag);
     },
     connectUser: async (context, userId) => {
-      const { user } = await getUser(userId)
-      const notifications = await getAllCommentsAndLikes(userId)
-      context.commit('setUser', { user, notifications })
+      const { user } = await getUser(userId);
+      const notifications = await getAllCommentsAndLikes(userId);
+      context.commit("setUser", { user, notifications });
     },
   },
   getters: {

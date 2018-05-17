@@ -41,7 +41,6 @@
 
 <script>
 import PictureCard from "@/components/PictureCard.vue";
-import store from "@/store";
 import { createFromAlgoliaCredentials } from "vue-instantsearch";
 
 const searchStore = createFromAlgoliaCredentials(
@@ -65,7 +64,7 @@ export default {
 
   computed: {
     tags() {
-      return store.getters.tags;
+      return this.$store.state.tags;
     }
   },
 
@@ -79,9 +78,9 @@ export default {
     },
 
     handleClose(tag) {
-      store.dispatch("deleteTag", tag);
+      this.$store.dispatch("deleteTag", tag);
     }
-  },
+  }
 };
 </script>
 

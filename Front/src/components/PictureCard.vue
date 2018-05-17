@@ -1,60 +1,79 @@
 <template>
-  <el-card :style="`
+  <el-card 
+    :style="`
     margin: 0 auto;
     width: 40%; 
     margin-bottom: 20px; 
     border-top: 2px solid #${picture.Color}`"
-    :body-style='{"text-align": "left"}'>
-    <div slot="header"
+    :body-style="{'text-align': 'left'}">
+    <div
+      slot="header"
       class="center-vertically">
-      <div class="round-icon flex"
-        :style="{ 'background-image': 'url(' + picture.User.Picture + ')' }" />
-      <a href="#"
-        class="flex">{{ picture.User.Nickname }}</a>
+      <div 
+        :style="{ 'background-image': 'url(' + picture.User.Picture + ')' }"
+        class="round-icon flex" />
+      <a 
+        href="#"
+        class="flex nickname header">{{ picture.User.Nickname }}</a>
     </div>
-    <img :src="picture.Image"
+    <img 
+      :src="picture.Image"
       class="image">
     <div style="padding: 14px;">
-      <el-button type="text"
-        @click="toggleLikePicture"
+      <el-button 
         :icon="`el-icon-circle-check${liked ? '' : '-outline'}`"
-        style="">{{ likesPhrase }}</el-button>
+        type="text"
+        style=""
+        @click="toggleLikePicture">
+        {{ likesPhrase }}
+      </el-button>
       <div>
-        <a href="#">
-          <span>{{ picture.User.Nickname }} </span>
+        <a 
+          href="#" 
+          class="nickname">
+          <span>{{ picture.User.Nickname }}</span>
         </a>
         <span class="legend">{{ picture.Description }} </span>
-        <el-button class="tags"
+        <el-button 
           v-for="(tag, i) in picture.Tags"
           :key="i"
-          type="text">#{{ tag.Text }}</el-button>
+          class="tags"
+          type="text">
+          #{{ tag.Text }}
+        </el-button>
         <span class="time pull-right">{{ picture.CreatedAt | fromNow }}</span>
       </div>
-      <div v-if="i < 5 || showMore"
+      <div 
         v-for="(comment, i) of orderedComments"
+        v-if="i < 5 || showMore"
         :key="i">
-        <a href="#">
-          <span> {{ comment.user.nickname }}</span>
+        <a
+          class="nickname" 
+          href="#">
+          <span>{{ comment.user.nickname }}</span>
         </a>
-        <span class="legend"> {{ comment.text }} </span>
+        <span class="legend">{{ comment.text }}</span>
         <span class="time pull-right">{{ comment.createdAt | fromNow }}</span>
       </div>
-      <el-button type="text"
+      <el-button 
         v-if="orderedComments.length > 0 && !showMore"
-        @click="showMore = true"
-        class="button">
+        type="text"
+        class="button"
+        @click="showMore = true">
         Show more comments..
       </el-button>
     </div>
     <div @keyup.enter="createComment">
-      <el-input type="text"
+      <el-input 
         :autosize="{ minRows: 1, maxRows: 4}"
-        placeholder="Add a comment"
-        v-model="comment">
-        <el-button slot="append"
-          @click="createComment"
+        v-model="comment"
+        type="text"
+        placeholder="Add a comment">
+        <el-button 
+          slot="append"
           type="primary"
-          icon="el-icon-edit-outline"></el-button>
+          icon="el-icon-edit-outline"
+          @click="createComment"/>
       </el-input>
     </div>
   </el-card>
@@ -71,8 +90,16 @@ import {
 import _ from "lodash";
 
 export default {
+  filters: {
+    fromNow(date) {
+      return moment.unix(date).fromNow();
+    }
+  },
   props: {
-    picture: Object
+    picture: {
+      type: Object,
+      default: null
+    }
   },
 
   data() {
@@ -82,41 +109,6 @@ export default {
       comment: "",
       showMore: false
     };
-  },
-
-  filters: {
-    fromNow(date) {
-      return moment.unix(date).fromNow();
-    }
-  },
-
-  methods: {
-    async toggleLikePicture() {
-      if (!this.liked) {
-        await createLike(this.picture.Id, this.$store.state.currentUser.id);
-      } else {
-        await deleteLike(this.picture.Id, this.$store.state.currentUser.id);
-      }
-      await this.refreshPicture();
-    },
-    async createComment() {
-      await createComment(
-        this.comment,
-        this.picture.Id,
-        store.getters.currentUser.id
-      );
-      await this.refreshPicture();
-      this.comment = "";
-    },
-    async refreshPicture() {
-      const response = await getLikesAndComments(this.picture.Id);
-      this.likes = response.picture.likes;
-      this.comments = response.picture.comments;
-    }
-  },
-
-  async created() {
-    await this.refreshPicture();
   },
 
   computed: {
@@ -132,11 +124,51 @@ export default {
     likesPhrase() {
       return `${this.likes.length} ${this.likes.length > 1 ? "likes" : "like"}`;
     }
+  },
+
+  async created() {
+    await this.refreshPicture();
+  },
+
+  methods: {
+    async toggleLikePicture() {
+      if (!this.liked) {
+        await createLike(this.picture.Id, this.$store.state.currentUser.id);
+      } else {
+        await deleteLike(this.picture.Id, this.$store.state.currentUser.id);
+      }
+      await this.refreshPicture();
+    },
+    async createComment() {
+      await createComment(
+        this.comment,
+        this.picture.Id,
+        this.$store.state.currentUser.id
+      );
+      await this.refreshPicture();
+      this.comment = "";
+    },
+    async refreshPicture() {
+      const response = await getLikesAndComments(this.picture.Id);
+      this.likes = response.picture.likes;
+      this.comments = response.picture.comments;
+    }
   }
 };
 </script>
 
 <style scoped>
+.header {
+  padding-left: 10px;
+  font-size: 18px;
+}
+
+.nickname {
+  text-decoration: none;
+  padding-right: 5px;
+  color: rgb(232, 0, 63);
+}
+
 .center-vertically {
   display: flex;
   align-items: center;
