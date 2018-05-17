@@ -14,5 +14,6 @@ namespace Data
         public string PictureUrl { get; set; }
         public string AccessToken { get; set; }
         public long NameIdentifier { get; set; }
+        public string Gender { get; set; }
     }
 }

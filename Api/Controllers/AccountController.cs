@@ -18,6 +18,8 @@ using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
+using System.Runtime.Serialization.Formatters.Binary;
+using Data;
 
 namespace Api.Controllers
 {
@@ -55,6 +57,7 @@ namespace Api.Controllers
         public async Task<IActionResult> FacebookLogin(string returnUrl = null)
         {
             await _signInManager.SignOutAsync();
+            HttpContext.Session.Remove("currentUser");
             string baseUrl = $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}";
             System.Diagnostics.Debug.WriteLine(baseUrl + (Url.Action("FacebookLoginCallback", "Account")));
             // Request a redirect to the external login provider.
@@ -86,6 +89,35 @@ namespace Api.Controllers
             return access_token;
         }
 
+        private Data.ApplicationUser GetApplicationUser(Facebook.Data.Account account, String accessToken)
+        {
+            Data.ApplicationUser user = new Data.ApplicationUser
+            {
+                Email = account.Email,
+                FacebookId = Convert.ToInt64(account.Id),
+                LastName = account.LastName,
+                UserName = account.UserName,
+                FirstName = account.FirstName,
+                AccessToken = accessToken,
+                Gender = account.Gender
+            };
+            return user;
+        }
+
+        private Core.Models.User GetTypeUser(Data.ApplicationUser currentUser)
+        {
+            Core.Models.User user = new Core.Models.User
+            {
+                Email = currentUser.Email,
+                Firstname = currentUser.FirstName,
+                Lastname = currentUser.LastName,
+                Gender = currentUser.Gender,
+                Nickname = currentUser.UserName,
+                Picture = currentUser.PictureUrl,
+                Password = ""
+            };
+            return user;
+        }
 
         [HttpGet]
         [AllowAnonymous]
@@ -114,17 +146,47 @@ namespace Api.Controllers
             var client = new Facebook.Client.FacebookClient();
             var service = new Facebook.Service.FacebookService(client);
             var account = await service.GetAccountAsync(accessToken);
-       
-            return Redirect("http://google.com?email=" + account.Email);
+
+            if (account == null || account.Email == null || account.Email == "")
+            {
+                _logger?.LogInformation($"Impossible to connect. Impossible to get account information");
+                return RedirectToAction("Index");
+            }
+
+            var currentUser = GetApplicationUser(account, accessToken);
+            await _signInManager.PasswordSignInAsync(currentUser, "", true, false);
+            var userDB = GetTypeUser(currentUser);
+
+            try
+            {
+                using (var db = new AmstramgramContext())
+                {
+                    Data.Repositories.UserRepository userRepo = new Data.Repositories.UserRepository(db, null);
+                    userDB = userRepo.Add(userDB);
+                    userRepo.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                _logger?.LogInformation($"Impossible to connect. Impossible to save account information\n" + e.Message);
+                return RedirectToAction("Index");
+            }
+
+            _logger?.LogInformation("User connected");
+            HttpContext.Session.Set("currentToken", Encoding.UTF8.GetBytes(accessToken));
+            HttpContext.Session.Set("currentUserId", Encoding.UTF8.GetBytes(userDB.Id.ToString()));
+            return RedirectToLocal("/");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
+            HttpContext.Session.Remove("currentToken");
+            HttpContext.Session.Remove("currentUserId");
             await _signInManager.SignOutAsync();
             _logger.LogInformation("User logged out.");
-            return RedirectToAction(nameof(HomeController.Index), "Home");
+            return RedirectToLocal("/");
         }
 
         [HttpGet]
