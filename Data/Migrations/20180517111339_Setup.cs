@@ -25,11 +25,13 @@ namespace Data.Migrations
                     Phone = table.Column<string>(nullable: true),
                     Picture = table.Column<string>(nullable: true),
                     Private = table.Column<bool>(nullable: false),
-                    objectID = table.Column<string>(nullable: true)
+                    objectID = table.Column<string>(nullable: true),
+                    AccessToken = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                    table.UniqueConstraint("U_Users", x => x.Email);
                 });
 
             migrationBuilder.CreateTable(

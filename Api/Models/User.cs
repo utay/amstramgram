@@ -13,6 +13,7 @@ namespace Api.Models
         public string Gender { get; set; }
         public string Description { get; set; }
         public bool Private { get; set; }
+        public string AccessToken { get; set; }
 
         public User[] Followers { get; set; }
         public Picture[] Pictures { get; set; }

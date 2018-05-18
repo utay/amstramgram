@@ -134,6 +134,10 @@ namespace Data.Migrations
 
                     b.Property<string>("objectID");
 
+                    b.Property<string>("AccessToken");
+
+                    b.HasIndex("Email").IsUnique();
+
                     b.HasKey("Id");
 
                     b.ToTable("Users");

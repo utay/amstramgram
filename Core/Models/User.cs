@@ -20,6 +20,8 @@ namespace Core.Models
         public string Description { get; set; }
         public bool Private { get; set; }
 
+        public string AccessToken { get; set; }
+
         public ICollection<UserFollower> Followers { get; set; }
         public ICollection<UserFollower> Following { get; set; }
         public ICollection<Picture> Pictures { get; set; }
