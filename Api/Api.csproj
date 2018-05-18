@@ -9,6 +9,7 @@
     <RuntimeIdentifiers>win10-x64</RuntimeIdentifiers>
     <RuntimeFrameworkVersion>2.0</RuntimeFrameworkVersion>
     <DebugType>Full</DebugType>
+    <UserSecretsId>cdc0eca0-8f33-4288-876a-57d7c4ddd14c</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,24 +21,30 @@
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\Data\Data.csproj" />
+    <ProjectReference Include="..\Facebook\Facebook.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Algolia.Search" Version="5.0.0" />
-    <PackageReference Include="AutoMapper" Version="6.0.2" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="2.0.0" />
-    <PackageReference Include="GraphQL" Version="0.15.1.678" />
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.6" />
+    <PackageReference Include="AutoMapper" Version="6.2.2" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="3.2.0" />
+    <PackageReference Include="GraphQL" Version="0.17.3" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.0.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="2.0.2" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="2.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.0.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="2.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.0.2" />
+	<DotNetCliToolReference Include="Microsoft.Extensions.Caching.SqlConfig.Tools" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="2.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.0.2" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
 
 </Project>

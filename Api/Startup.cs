@@ -13,6 +13,15 @@ using Microsoft.EntityFrameworkCore;
 using GraphQL.Types;
 using GraphQL;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Rewrite;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Facebook;
+using Microsoft.AspNetCore.Authentication.Facebook;
+using Api.Helper;
+using System;
 //using Core.Logic;
 
 namespace Api
@@ -36,9 +45,45 @@ namespace Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
             // Add framework services.
+
             services.AddCors();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            services.AddDistributedSqlServerCache(options =>
+            {
+                options.ConnectionString = Configuration["ConnectionStrings:AmstramgramDatabaseConnection"];
+                options.SchemaName = "dbo";
+                options.TableName = "Session";
+            });
+
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.Secure = CookieSecurePolicy.SameAsRequest;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+
+            services.AddSession(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.IdleTimeout = TimeSpan.FromHours(5);
+                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+                options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None;
+                options.Cookie.Path = "/";
+            });
+
             services.AddMvc();
+
+            
+            /*services.Configure<MvcOptions>(options =>
+            {
+                options.Filters.Add(new RequireHttpsAttribute());
+            });*/
+
+
+
             services.AddAutoMapper(typeof(Startup));
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings
             {
@@ -83,6 +128,23 @@ namespace Api
 
             var sp = services.BuildServiceProvider();
             services.AddScoped<ISchema>(_ => new AmstramgramSchema(type => (GraphType)sp.GetService(type)) { Query = sp.GetService<AmstramgramQuery>(), Mutation = sp.GetService<AmstramgramMutation>() });
+
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                    .AddEntityFrameworkStores<AmstramgramContext>()
+                    .AddDefaultTokenProviders();
+
+            services.AddAuthentication()
+            .AddCookie("ConnectionCookie")
+            .AddFacebook(facebookOptions =>
+            {
+                facebookOptions.AppId = Configuration["Facebook:AppId"];
+                facebookOptions.AppSecret = Configuration["Facebook:AppSecret"];
+                facebookOptions.BackchannelHttpHandler = new FacebookBackChannelHandler();
+                facebookOptions.Scope.Add("email");
+                facebookOptions.SaveTokens = true;
+                facebookOptions.TokenEndpoint = "https://graph.facebook.com/v3.0/oauth/access_token";
+                facebookOptions.UserInformationEndpoint = "https://graph.facebook.com/v3.0/me?fields=id,name,email,first_name,last_name";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -93,11 +155,30 @@ namespace Api
             loggerFactory.AddDebug();
 
             app.UseCors(
-                options => options.WithOrigins("http://localhost:8080").AllowAnyMethod().AllowAnyHeader().AllowCredentials()
+                options => options.WithOrigins("http://localhost:8080", "http://localhost:5000").AllowAnyMethod().AllowAnyHeader().AllowCredentials()
             );
 
+            app.UseSession();
+
+            app.Use((httpContext, nextMiddleware) =>
+            {
+                httpContext.Session.SetObject("_SessionKey", String.Empty);
+                httpContext.Session.SetObject("_SessionDate", DateTime.Now);
+
+                return nextMiddleware();
+            });
+
             app.UseStaticFiles();
+
             app.UseMvc();
+
+            app.UseCookiePolicy();
+
+            /*var optionsRewrite = new RewriteOptions()
+                              .AddRedirectToHttps(StatusCodes.Status301MovedPermanently, 63423);*/
+
+            //app.UseRewriter(optionsRewrite);
+            AppHttpContext.Configure(app.ApplicationServices.GetRequiredService<IHttpContextAccessor>());
             // db.EnsureSeedData();
         }
     }

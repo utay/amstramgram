@@ -133,7 +133,11 @@ namespace Data.Migrations
 
                     b.Property<string>("objectID");
 
+                    b.Property<string>("AccessToken");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("Email").IsUnique();
 
                     b.ToTable("Users");
                 });

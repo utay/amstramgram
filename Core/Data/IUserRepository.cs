@@ -10,5 +10,9 @@ namespace Core.Data
 
         Task<ICollection<UserFollower>> GetFollowers(long id);
         Task<ICollection<UserFollower>> GetFollowing(long id);
+
+        Task<User> GetFromAccessToken(string accessToken);
+
+        Task<User> GetFromEmail(string email);
     }
 }

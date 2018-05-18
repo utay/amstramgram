@@ -6,6 +6,10 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Api.Models;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Data;
+using Api.Helper;
 
 namespace Api.Controllers
 {
@@ -16,11 +20,14 @@ namespace Api.Controllers
         private ISchema _schema { get; set; }
         private readonly ILogger _logger;
 
-        public GraphQLController(IDocumentExecuter documentExecuter, ISchema schema, ILogger<GraphQLController> logger)
+        private readonly SignInManager<ApplicationUser> _manager;
+
+        public GraphQLController(IDocumentExecuter documentExecuter, ISchema schema, ILogger<GraphQLController> logger, SignInManager<ApplicationUser> manager)
         {
             _documentExecuter = documentExecuter;
             _schema = schema;
             _logger = logger;
+            _manager = manager;
         }
 
         [HttpGet]
