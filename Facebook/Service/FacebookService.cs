@@ -19,7 +19,7 @@ namespace Facebook.Service
         public async Task<Account> GetAccountAsync(string accessToken)
         {
             var result = await _facebookClient.GetAsync<dynamic>(
-                accessToken, "me", "fields=id,name,email,first_name,last_name,age_range,birthday,gender,locale");
+                accessToken, "me", "fields=id,name,email,first_name,last_name,age_range,birthday,gender,locale,location");
 
             if (result == null)
             {
@@ -34,7 +34,9 @@ namespace Facebook.Service
                 UserName = result.username,
                 FirstName = result.first_name,
                 LastName = result.last_name,
-                Locale = result.locale
+                Locale = result.locale,
+                Gender = result.gender,
+                PictureUrl = "https://graph.facebook.com/" + result.id + "/picture?type=large"
             };
 
             return account;

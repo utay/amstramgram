@@ -130,7 +130,8 @@ namespace Api.Controllers
                 UserName = account.UserName,
                 FirstName = account.FirstName,
                 AccessToken = accessToken,
-                Gender = account.Gender
+                Gender = account.Gender,
+                PictureUrl = account.PictureUrl
             };
             return user;
         }
@@ -140,11 +141,12 @@ namespace Api.Controllers
             Core.Models.User user = new Core.Models.User
             {
                 Email = currentUser.Email,
+                Description = "",
                 Firstname = currentUser.FirstName,
                 Lastname = currentUser.LastName,
-                Gender = currentUser.Gender,
-                Nickname = currentUser.UserName,
-                Picture = currentUser.PictureUrl,
+                Gender = currentUser.Gender ?? "",
+                Nickname = currentUser.UserName ?? currentUser.Email,
+                Picture = currentUser.PictureUrl ?? "",
                 Password = ""
             };
             return user;
