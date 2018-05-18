@@ -146,9 +146,10 @@ namespace Api.Controllers
                 Firstname = currentUser.FirstName,
                 Lastname = currentUser.LastName,
                 Gender = currentUser.Gender ?? "",
-                Nickname = currentUser.UserName ?? $"{currentUser.FirstName}.{currentUser.LastName}",
+                Nickname = currentUser.UserName ?? $"{currentUser.FirstName.ToLower()}.{currentUser.LastName.ToLower()}",
                 Picture = currentUser.PictureUrl ?? "",
-                Password = ""
+                Password = "",
+                Private = true
             };
             return user;
         }
