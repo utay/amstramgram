@@ -1,12 +1,12 @@
 <template>
   <div>
-    <el-menu 
+    <el-menu
       default-active="1"
       class="el-menu-demo"
       mode="horizontal"
       @select="handleSelect">
       <el-menu-item index="1">
-        <img 
+        <img
           :src="require('../assets/logo.png')"
           :width="25"
           :height="25"
@@ -16,35 +16,35 @@
         <autocomplete />
       </el-menu-item>
       <el-menu-item index="3">
-        <i 
+        <i
           style="font-size: 1.2rem"
           class="fas fa-plus-square fa-2x"/>
       </el-menu-item>
       <el-menu-item index="4">
-        <i 
+        <i
           style="font-size: 1.2rem"
           class="fas fa-cog fa-2x"/>
       </el-menu-item>
       <el-menu-item index="5">
         <el-dropdown
           @command="e => $router.push({name: 'picture', params: { id: e}})">
-          <el-badge 
+          <el-badge
             :value="100"
             :max="10"
             class="item">
-            <i 
+            <i
               style="font-size: 1.2rem"
               class="fas fa-heart fa-2x"/>
           </el-badge>
           <el-dropdown-menu
             slot="dropdown">
-            <el-dropdown-item 
+            <el-dropdown-item
               v-for="(notification, i) of notifications"
               :key="i"
               :command="notification.picture.id">
               <div
                 class="center-vertically">
-                <div 
+                <div
                   :style="{ 'background-image': 'url(' + notification.user.picture + ')' }"
                   class="round-icon flex" />
                 <div
@@ -52,14 +52,14 @@
                   <div>
                     <span class="nickname-text">{{ notification.user.nickname }}</span>
                     <span>
-                      {{ notification.type !== "comment" ? " liked " 
+                      {{ notification.type !== "comment" ? " liked "
                       : " commented : " }}
                     </span>
-                    <span 
+                    <span
                       v-if="notification.type === 'comment'">
-                      "<span class="nickname-text">{{ notification.text }}</span>" on 
+                      "<span class="nickname-text">{{ notification.text }}</span>" on
                     </span>
-                    your picture, 
+                    your picture,
                     <span class="time">{{ notification.createdAt | fromNow }}</span>
                   </div>
                 </div>
@@ -69,15 +69,15 @@
         </el-dropdown>
       </el-menu-item>
       <el-menu-item index="6">
-        <i 
+        <i
           style="font-size: 1.2rem"
           class="fas fa-user"/>
       </el-menu-item>
     </el-menu>
-    <el-dialog 
+    <el-dialog
       :visible.sync="dialogVisible"
       width="80%">
-      <upload 
+      <upload
         v-if="dialogVisible"
         @uploadDone="dialogVisible = false" />
     </el-dialog>
@@ -131,7 +131,6 @@ export default {
           this.$router.push({ name: "settings" });
           break;
         case "5":
-          console.log("tata")
           break;
         case "6":
           this.$router.push({ name: "profile" });

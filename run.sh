@@ -7,6 +7,7 @@ sleep 10
 (
     cd /app/Data
     dotnet ef database update
+    dotnet sql-cache create 'Server=sqlserver;Database=master;User=sa;Password=Strong(!)Password;' "dbo" "Session"
 )
 
 # start the application

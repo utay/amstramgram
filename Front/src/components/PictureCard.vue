@@ -1,29 +1,29 @@
 <template>
-  <el-card 
+  <el-card
     v-if="pictureData"
     :style="`
     margin: 0 auto;
-    width: 40%; 
-    margin-bottom: 20px; 
+    width: 40%;
+    margin-bottom: 20px;
     border-top: 2px solid #${pictureData.color}`"
     :body-style="{'text-align': 'left'}">
     <div
       slot="header"
       class="center-vertically">
-      <div 
+      <div
         :style="{ 'background-image': 'url(' + pictureData.user.picture + ')' }"
         class="round-icon flex" />
-      <a 
+      <a
         href="#"
         class="flex nickname header">
         {{ pictureData.user.nickname }}
       </a>
     </div>
-    <img 
+    <img
       :src="pictureData.image"
       class="image">
     <div style="padding: 14px;">
-      <el-button 
+      <el-button
         :icon="`el-icon-circle-check${liked ? '' : '-outline'}`"
         type="text"
         style=""
@@ -31,13 +31,13 @@
         {{ likesPhrase }}
       </el-button>
       <div>
-        <a 
-          href="#" 
+        <a
+          href="#"
           class="nickname">
           <span>{{ pictureData.user.nickname }}</span>
         </a>
         <span class="legend">{{ pictureData.description }} </span>
-        <el-button 
+        <el-button
           v-for="(tag, i) in pictureData.tags"
           :key="i"
           class="tags"
@@ -46,19 +46,19 @@
         </el-button>
         <span class="time pull-right">{{ pictureData.createdAt | fromNow }}</span>
       </div>
-      <div 
+      <div
         v-for="(comment, i) of orderedComments"
         v-if="i < 5 || showMore"
         :key="i">
         <a
-          class="nickname" 
+          class="nickname"
           href="#">
           <span>{{ comment.user.nickname }}</span>
         </a>
         <span class="legend">{{ comment.text }}</span>
         <span class="time pull-right">{{ comment.createdAt | fromNow }}</span>
       </div>
-      <el-button 
+      <el-button
         v-if="orderedComments.length > 5 && !showMore"
         type="text"
         class="button"
@@ -67,12 +67,12 @@
       </el-button>
     </div>
     <div @keyup.enter="createComment">
-      <el-input 
+      <el-input
         :autosize="{ minRows: 1, maxRows: 4}"
         v-model="comment"
         type="text"
         placeholder="Add a comment">
-        <el-button 
+        <el-button
           slot="append"
           type="primary"
           icon="el-icon-edit-outline"
@@ -176,7 +176,6 @@ export default {
     },
     async refreshPicture() {
       const response = await getLikesAndComments(this.pictureData.id);
-      console.log(response);
       this.likes = response.picture.likes;
       this.comments = response.picture.comments;
     }

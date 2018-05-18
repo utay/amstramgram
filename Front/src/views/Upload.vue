@@ -1,29 +1,29 @@
 <template>
-  <el-row 
+  <el-row
     v-loading="isLoading"
     :gutter="10"
     style="height:500px">
-    <el-col 
+    <el-col
       :span="12"
       style="height:100%">
-      <div 
+      <div
         v-if="!imageUploaded"
         class="red-border parent"
         style="height:100%"
         @click="uploadCloudinary">
         Upload a picture!
       </div>
-      <img 
+      <img
         v-else
         :src="image.url"
         style="height:100%; width: 100%">
     </el-col>
-    <el-col 
+    <el-col
       :span="12"
       style="height:100%">
       <h1>Description</h1>
       <div class="red-border">
-        <el-input 
+        <el-input
           :autosize="{
             minRows: 5, maxRows: 5
           }"
@@ -33,7 +33,7 @@
           placeholder="Your image description"/>
       </div>
       <h2>Tags</h2>
-      <div 
+      <div
         class="red-border"
         style="
           height:35%;
@@ -41,16 +41,15 @@
           margin-bottom: 3%;
           text-align: left;
           padding: 10px;">
-        <el-tag 
+        <el-tag
           v-for="tag in image.tags"
           :key="tag"
-          :disable-transitions="false"
           closable
           type="primary"
           @close="handleClose(tag)">
           #{{ tag }}
         </el-tag>
-        <el-input 
+        <el-input
           v-if="inputVisible"
           ref="saveTagInput"
           v-model="inputValue"
@@ -58,7 +57,7 @@
           size="mini"
           @keyup.enter.native="handleInputConfirm"
           @blur="handleInputConfirm"/>
-        <el-button 
+        <el-button
           v-else
           class="button-new-tag"
           size="small"
@@ -66,7 +65,7 @@
           + New Tag
         </el-button>
       </div>
-      <el-button 
+      <el-button
         type="danger"
         round
         icon="el-icon-check"

@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="tags">
-      <el-tag 
+      <el-tag
         v-for="(tag, i) in tags"
         :key="i"
         closable
@@ -11,7 +11,7 @@
       </el-tag>
     </div>
 
-    <ais-index 
+    <ais-index
       :search-store="searchStore"
       :query-parameters="{
         page,
