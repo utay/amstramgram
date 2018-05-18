@@ -89,6 +89,24 @@ namespace Api.Models
                 }
             );
 
+            Field<CommentType>(
+                "deleteComment",
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<CommentInputType>> { Name = "comment" }
+                ),
+                resolve: context =>
+                {
+                    var data = context.GetArgument<Core.Models.Comment>("comment");
+                    if (userRepository.Get(data.UserId).Result == null || pictureRepository.Get(data.PictureId).Result == null)
+                    {
+                        return null;
+                    }
+                    commentRepository.Delete(data);
+                    commentRepository.SaveChanges();
+                    return mapper.Map<Comment>(data);
+                }
+            );
+
             Field<LikeType>(
                 "createLike",
                 arguments: new QueryArguments(
