@@ -14,5 +14,6 @@ namespace Core.Data
         Task<User> GetFromAccessToken(string accessToken);
 
         Task<User> GetFromEmail(string email);
+        Task<User> SignInUser(User user);
     }
 }

@@ -3,6 +3,7 @@ using GraphQL.Types;
 using Core;
 using System;
 using Algolia.Search;
+using System.Security.Cryptography;
 
 namespace Api.Models
 {
@@ -181,6 +182,45 @@ namespace Api.Models
                     userFollowerRepository.Delete(follower);
                     userFollowerRepository.SaveChanges();
                     return mapper.Map<UserFollower>(follower);
+                }
+            );
+
+            Field<UserType>(
+               "registerUser",
+               arguments: new QueryArguments(
+                   new QueryArgument<NonNullGraphType<UserInputType>> { Name = "user" }
+               ),
+               resolve: context =>
+               {
+                   var data = context.GetArgument<Core.Models.User>("user");
+                   if (data.Email == null || data.Email == "" || data.Password == null || data.Password == "")
+                       return null;
+                   data.Password = Helper.Users.HashPassword(data.Password);
+                   var user = userRepository.Add(data);
+                   userRepository.SaveChanges();
+                   user.objectID = data.Id.ToString();
+                   usersIndex.AddObject(data);
+                   userRepository.Update(data);
+                   userRepository.SaveChanges();
+                   Helper.AppHttpContext.HttpContext.Response.Cookies.Append(".Amstramgram.Cookie", user.Password);
+                   return mapper.Map<User>(user);
+               }
+           );
+
+            Field<UserType>(
+                "connectUser",
+                arguments: new QueryArguments(
+                   new QueryArgument<NonNullGraphType<UserInputType>> { Name = "user" }
+               ),
+                resolve: context =>
+                {
+                    var data = context.GetArgument<Core.Models.User>("user");
+                    if (data.Email == null || data.Email == "" || data.Password == null || data.Password == "")
+                        return null;
+                    data.Password = Helper.Users.HashPassword(data.Password);
+                    var user = userRepository.SignInUser(data).Result;
+                    Helper.AppHttpContext.HttpContext.Response.Cookies.Append(".Amstramgram.Cookie", user.AccessToken);
+                    return mapper.Map<User>(user);
                 }
             );
         }
