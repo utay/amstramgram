@@ -41,7 +41,7 @@ namespace Data.Repositories
 
         public async Task<User> GetFromAccessToken(string accessToken)
         {
-            User user = (await GetAll()).Find(u => u.Password == accessToken);
+            User user = (await GetAll()).Find(u => u.AccessToken == accessToken);
             return user;
         }
     }

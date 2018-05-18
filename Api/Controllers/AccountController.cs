@@ -190,7 +190,7 @@ namespace Api.Controllers
             var currentUser = GetApplicationUser(account, accessToken);            
             var userDB = GetTypeUser(currentUser);
             userDB.Password = Users.HashPassword(accessToken);
-
+            userDB.AccessToken = accessToken;
             try
             {
                 using (var db = new AmstramgramContext())
@@ -199,7 +199,7 @@ namespace Api.Controllers
                     var userInDb = await userRepo.GetFromEmail(userDB.Email);
                     if (userInDb == null)
                     {
-                        userDB = userRepo.Add(userDB);
+                        userDB = userRepo.Add(userDB);                        
                         userRepo.SaveChanges();
                         AlgoliaClient algolia = new AlgoliaClient("A71NP8C36C", "ac1a68327b713553e3d21307968adab7");
                         Index usersIndex = algolia.InitIndex("Amstramgram_users");
@@ -209,7 +209,7 @@ namespace Api.Controllers
                         userRepo.SaveChanges();
                     }
                     else
-                    {                        
+                    {            
                         userDB = userInDb;
                         userDB.Password = Users.HashPassword(accessToken);
                         userRepo.Update(userDB);
@@ -228,7 +228,7 @@ namespace Api.Controllers
             _signInManager.Context.Session.SetObject("currentToken", accessToken);
             await _signInManager.Context.Session.CommitAsync();
 
-            Response.Cookies.Append(".Amstramgram.Cookie", userDB.Password);
+            Response.Cookies.Append(".Amstramgram.Cookie", accessToken);
 
             return RedirectToLocal("/feed");
         }
