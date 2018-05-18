@@ -23,6 +23,7 @@ using Data;
 using Microsoft.AspNetCore.Http;
 using Api.Helper;
 using Algolia.Search;
+using Microsoft.Extensions.Configuration;
 
 namespace Api.Controllers
 {
@@ -33,17 +34,20 @@ namespace Api.Controllers
         private readonly UserManager<Data.ApplicationUser> _userManager;
         private readonly SignInManager<Data.ApplicationUser> _signInManager;
         private readonly ILogger _logger;
+        private readonly IConfiguration _configuration;
 
         public string ErrorMessage { get; private set; }
 
         public AccountController(
             UserManager<Data.ApplicationUser> userManager,
             SignInManager<Data.ApplicationUser> signInManager,
-            ILogger<AccountController> logger)
+            ILogger<AccountController> logger,
+            IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -88,14 +92,11 @@ namespace Api.Controllers
         [Route("auth/facebook")]
         public async Task<IActionResult> FacebookLogin(string returnUrl = null)
         {
-            await _signInManager.SignOutAsync();            
-            //HttpContext.Session.Remove("currentUser");
-            string baseUrl = $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}";
-            System.Diagnostics.Debug.WriteLine(baseUrl + (Url.Action("FacebookLoginCallback", "Account")));
-            // Request a redirect to the external login provider.
+            await _signInManager.SignOutAsync();
+
             var authProperties = new AuthenticationProperties
             {
-                RedirectUri = baseUrl + (Url.Action("FacebookLoginCallback", "Account")),
+                RedirectUri = _configuration.GetValue<string>("Facebook:redirectUri"),
                 Items = { new KeyValuePair<string, string>("LoginProvider", "Facebook") }
             };
             return Challenge(authProperties, "Facebook");
@@ -167,7 +168,10 @@ namespace Api.Controllers
                 return RedirectToAction("Index");
             }
             string url = "https://graph.facebook.com/v3.0/oauth/access_token?client_id=";
-            url += "373455309833356&redirect_uri=https://localhost:44307/signin-facebook&client_secret=2e0e737ad1a89d0f251ebfaebfd3f76c";
+            url += _configuration.GetValue<string>("Facebook:AppId");
+            url += "&redirect_uri=";
+            url += _configuration.GetValue<string>("Facebook:redirectUri") + "&client_secret=";
+            url += _configuration.GetValue<string>("Facebook:AppSecret");
             url += "&code=" + codeString;
 
             string accessToken = await GetAccessToken(url);

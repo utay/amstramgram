@@ -75,8 +75,9 @@ namespace Api
             });
 
             services.AddMvc();
+            services.AddSingleton<IConfiguration>(Configuration);
 
-            
+
             /*services.Configure<MvcOptions>(options =>
             {
                 options.Filters.Add(new RequireHttpsAttribute());
