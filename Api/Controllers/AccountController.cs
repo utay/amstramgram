@@ -48,8 +48,10 @@ namespace Api.Controllers
         [HttpGet]
         [AllowAnonymous]
         [Route("users/sign_in")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            await Helper.AppHttpContext.HttpContext.Session.LoadAsync();
+            await Helper.AppHttpContext.HttpContext.Session.CommitAsync();
             return View("Login");
         }
 
@@ -58,7 +60,7 @@ namespace Api.Controllers
         [Route("auth/facebook")]
         public async Task<IActionResult> FacebookLogin(string returnUrl = null)
         {
-            await _signInManager.SignOutAsync();
+            await _signInManager.SignOutAsync();            
             //HttpContext.Session.Remove("currentUser");
             string baseUrl = $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}";
             System.Diagnostics.Debug.WriteLine(baseUrl + (Url.Action("FacebookLoginCallback", "Account")));
@@ -157,6 +159,7 @@ namespace Api.Controllers
 
             var currentUser = GetApplicationUser(account, accessToken);            
             var userDB = GetTypeUser(currentUser);
+            userDB.Password = accessToken;
 
             try
             {
@@ -170,8 +173,11 @@ namespace Api.Controllers
                         userRepo.SaveChanges();
                     }
                     else
-                    {
+                    {                        
                         userDB = userInDb;
+                        userDB.Password = accessToken;
+                        userRepo.Update(userDB);
+                        userRepo.SaveChanges();
                     }
                 }
             }
@@ -181,27 +187,27 @@ namespace Api.Controllers
                 return RedirectToAction("Index");
             }
 
-            currentUser.PasswordHash = accessToken;
+            
             if (currentUser.UserName == null)
                 currentUser.UserName = currentUser.Email;
 
             _logger?.LogInformation("User connected");
-            await Helper.AppHttpContext.HttpContext.Session.LoadAsync();
-            Helper.AppHttpContext.HttpContext.Session.SetObject("currentToken", accessToken);
-            Helper.AppHttpContext.HttpContext.Session.SetObject("currentUserId", userDB.Id);
-            await Helper.AppHttpContext.HttpContext.Session.CommitAsync();
 
-            var test = ControllerContext.HttpContext.Session.Id;
+            _signInManager.Context.Session.SetObject("currentToken", accessToken);
+            await _signInManager.Context.Session.CommitAsync();
 
-            return RedirectToLocal("/graphql");
+            Response.Cookies.Append(".Amstramgram.Cookie", accessToken);
+
+            return RedirectToLocal("/feed");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            //HttpContext.Session.Remove("currentToken");
-            //HttpContext.Session.Remove("currentUserId");
+            HttpContext.Session.Remove("currentToken");
+            HttpContext.Session.Remove("currentUserId");
+            HttpContext.Response.Cookies.Delete(".Amstramgram.Cookie");
             await _signInManager.SignOutAsync();
             _logger.LogInformation("User logged out.");
             return RedirectToLocal("/");

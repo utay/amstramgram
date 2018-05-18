@@ -51,12 +51,6 @@ namespace Api
             services.AddCors();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
-
-
             services.AddDistributedSqlServerCache(options =>
             {
                 options.ConnectionString = Configuration["ConnectionStrings:AmstramgramDatabaseConnection"];
@@ -64,19 +58,29 @@ namespace Api
                 options.TableName = "Session";
             });
 
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.Secure = CookieSecurePolicy.SameAsRequest;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+
             services.AddSession(options =>
             {
                 options.Cookie.HttpOnly = true;
                 options.IdleTimeout = TimeSpan.FromHours(5);
+                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+                options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None;
+                options.Cookie.Path = "/";
             });
 
             services.AddMvc();
 
             
-            services.Configure<MvcOptions>(options =>
+            /*services.Configure<MvcOptions>(options =>
             {
                 options.Filters.Add(new RequireHttpsAttribute());
-            });
+            });*/
 
 
 
@@ -130,6 +134,7 @@ namespace Api
                     .AddDefaultTokenProviders();
 
             services.AddAuthentication()
+            .AddCookie("ConnectionCookie")
             .AddFacebook(facebookOptions =>
             {
                 facebookOptions.AppId = Configuration["Facebook:AppId"];
@@ -154,16 +159,25 @@ namespace Api
             );
 
             app.UseSession();
-            
+
+            app.Use((httpContext, nextMiddleware) =>
+            {
+                httpContext.Session.SetObject("_SessionKey", String.Empty);
+                httpContext.Session.SetObject("_SessionDate", DateTime.Now);
+
+                return nextMiddleware();
+            });
+
             app.UseStaticFiles();
 
             app.UseMvc();
 
             app.UseCookiePolicy();
 
-            var optionsRewrite = new RewriteOptions()
-                              .AddRedirectToHttps(StatusCodes.Status301MovedPermanently, 63423);
-            app.UseRewriter(optionsRewrite);
+            /*var optionsRewrite = new RewriteOptions()
+                              .AddRedirectToHttps(StatusCodes.Status301MovedPermanently, 63423);*/
+
+            //app.UseRewriter(optionsRewrite);
             AppHttpContext.Configure(app.ApplicationServices.GetRequiredService<IHttpContextAccessor>());
             // db.EnsureSeedData();
         }

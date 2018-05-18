@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using Api.Helper;
+using AutoMapper;
 using Data;
 using GraphQL.Types;
 using Microsoft.AspNetCore.Http;
@@ -63,12 +64,19 @@ namespace Api.Models
                 ),
                 resolve: context =>
                 {
-                    var stringArray = Helper.AppHttpContext.HttpContext.Session.GetString("currentUserId");
-                    if (stringArray == null)
+                    if (Helper.AppHttpContext.HttpContext.Request.Cookies.TryGetValue(".Amstramgram.Cookie", out string accessToken))
+                    {
+                        var userDB = userRepository.GetFromAccessToken(accessToken).Result;
+                        if (userDB != null)
+                        {
+                            Helper.AppHttpContext.HttpContext.Session.SetObject<long>("currentUserId", userDB.Id);
+                            Helper.AppHttpContext.HttpContext.Response.Cookies.Delete(".Amstramgram.Cookie");
+                        }
+                    }
+                    long? id = Helper.AppHttpContext.HttpContext.Session.GetObject<long>("currentUserId");
+                    if (id == null ||id == 0)
                         return null;
-                    if (long.TryParse(stringArray, out long id))
-                        return null;
-                    var user = userRepository.Get(id).Result;
+                    var user = userRepository.Get(id.Value).Result;
                     var mapped = mapper.Map<User>(user);
                     return mapped;
                 }
