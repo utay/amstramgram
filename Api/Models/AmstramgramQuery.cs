@@ -59,20 +59,9 @@ namespace Api.Models
 
             Field<UserType>(
                 "currentUser",
-                arguments: new QueryArguments(
-                    
-                ),
+                arguments: new QueryArguments(),
                 resolve: context =>
                 {
-                    if (Helper.AppHttpContext.HttpContext.Request.Cookies.TryGetValue(".Amstramgram.Cookie", out string accessToken))
-                    {
-                        var userDB = userRepository.GetFromAccessToken(accessToken).Result;
-                        if (userDB != null)
-                        {
-                            Helper.AppHttpContext.HttpContext.Session.SetObject<long>("currentUserId", userDB.Id);
-                            Helper.AppHttpContext.HttpContext.Response.Cookies.Delete(".Amstramgram.Cookie");
-                        }
-                    }
                     long? id = Helper.AppHttpContext.HttpContext.Session.GetObject<long>("currentUserId");
                     if (id == null ||id == 0)
                         return null;

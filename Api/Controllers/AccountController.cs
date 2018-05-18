@@ -55,6 +55,33 @@ namespace Api.Controllers
             return View("Login");
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("me")]
+        public IActionResult Me()
+        {
+            Core.Models.User userDB = null;
+            string accessToken = null;
+            long? id = null;
+            if (!Helper.AppHttpContext.HttpContext.Request.Cookies.TryGetValue(".Amstramgram.Cookie", out accessToken))
+            {
+                id = Helper.AppHttpContext.HttpContext.Session.GetObject<long>("currentUserId");
+            }
+            if (accessToken == null && (id == null || id == 0))
+                return Json(null);
+            using (var ctx = new AmstramgramContext())
+            {
+               var userRepo = new Data.Repositories.UserRepository(ctx, null);
+               userDB = (accessToken != null) ? userRepo.GetFromAccessToken(accessToken).Result : userRepo.Get(id.Value).Result;
+               if (userDB != null)
+               {
+                   Helper.AppHttpContext.HttpContext.Session.SetObject<long>("currentUserId", userDB.Id);
+                   Helper.AppHttpContext.HttpContext.Response.Cookies.Delete(".Amstramgram.Cookie");
+               }
+            }
+            return Json(userDB);
+        }
+
         [HttpPost]
         [AllowAnonymous]
         [Route("auth/facebook")]
