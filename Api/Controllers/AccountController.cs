@@ -228,7 +228,7 @@ namespace Api.Controllers
             _signInManager.Context.Session.SetObject("currentToken", accessToken);
             await _signInManager.Context.Session.CommitAsync();
 
-            Response.Cookies.Append(".Amstramgram.Cookie", accessToken);
+            Response.Cookies.Append(".Amstramgram.Cookie", userDB.AccessToken);
 
             return RedirectToLocal("/feed");
         }
