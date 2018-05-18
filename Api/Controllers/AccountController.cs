@@ -146,7 +146,7 @@ namespace Api.Controllers
                 Firstname = currentUser.FirstName,
                 Lastname = currentUser.LastName,
                 Gender = currentUser.Gender ?? "",
-                Nickname = currentUser.UserName ?? currentUser.Email,
+                Nickname = currentUser.UserName ?? $"{currentUser.FirstName}.{currentUser.LastName}",
                 Picture = currentUser.PictureUrl ?? "",
                 Password = ""
             };
