@@ -22,6 +22,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using Data;
 using Microsoft.AspNetCore.Http;
 using Api.Helper;
+using Algolia.Search;
 
 namespace Api.Controllers
 {
@@ -200,6 +201,10 @@ namespace Api.Controllers
                     {
                         userDB = userRepo.Add(userDB);
                         userRepo.SaveChanges();
+                        AlgoliaClient algolia = new AlgoliaClient("A71NP8C36C", "ac1a68327b713553e3d21307968adab7");
+                        Index usersIndex = algolia.InitIndex("Amstramgram_users");
+                        userDB.objectID = userDB.Id.ToString();
+                        usersIndex.AddObject(userDB);
                     }
                     else
                     {                        
