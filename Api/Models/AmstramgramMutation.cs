@@ -4,6 +4,7 @@ using Core;
 using System;
 using Algolia.Search;
 using System.Security.Cryptography;
+using Newtonsoft.Json.Linq;
 
 namespace Api.Models
 {
@@ -35,6 +36,21 @@ namespace Api.Models
                     data.objectID = data.Id.ToString();
                     usersIndex.AddObject(data);
                     return mapper.Map<User>(user);
+                }
+            );
+
+            Field<UserType>(
+                "updateUser",
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<UserInputType>> { Name = "user" }
+                ),
+                resolve: context =>
+                {
+                    var data = context.GetArgument<Core.Models.User>("user");
+                    userRepository.Update(data);
+                    userRepository.SaveChanges();
+                    usersIndex.PartialUpdateObject(JObject.Parse(Newtonsoft.Json.JsonConvert.SerializeObject(data)));
+                    return mapper.Map<User>(null);
                 }
             );
 
