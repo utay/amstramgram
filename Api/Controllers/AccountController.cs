@@ -228,16 +228,20 @@ namespace Api.Controllers
             return RedirectToLocal("/feed");
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("users/logout")]
         public async Task<IActionResult> Logout()
         {
             HttpContext.Session.Remove("currentToken");
             HttpContext.Session.Remove("currentUserId");
-            HttpContext.Response.Cookies.Delete(".Amstramgram.Cookie");
+            foreach (var cookie in Request.Cookies.Keys)
+            {
+                Response.Cookies.Delete(cookie);
+            }
             await _signInManager.SignOutAsync();
             _logger.LogInformation("User logged out.");
-            return RedirectToLocal("/");
+            return Ok();
         }
 
         [HttpGet]
