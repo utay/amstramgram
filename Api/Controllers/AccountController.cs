@@ -55,7 +55,7 @@ namespace Api.Controllers
         public IActionResult Index()
         {
             if (Users.IsConnected())
-                return RedirectToLocal("/feed");
+                return Redirect(_configuration.GetValue<string>("RedirectFront"));
             return View("Login");
         }
 
@@ -150,7 +150,7 @@ namespace Api.Controllers
                 Picture = currentUser.PictureUrl ?? "",
                 Phone = "",
                 Password = "",
-                Private = true
+                Private = false
             };
             return user;
         }
@@ -179,7 +179,7 @@ namespace Api.Controllers
                     if (userInDb == null || userInDb.Id == 0)
                         return RedirectToLocal("/");
                     Helper.AppHttpContext.HttpContext.Session.SetObject<long>("currentUserId", userInDb.Id);
-                    return RedirectToLocal("/feed");
+                    return Redirect(_configuration.GetValue<string>("RedirectFront"));
                 }
             }
             else
@@ -219,7 +219,7 @@ namespace Api.Controllers
                             Gender = "",
                             Phone = "",
                             Picture = "",
-                            Private = true
+                            Private = false
                         };
                         user = userRepo.Add(user);
                         userRepo.SaveChanges();
@@ -230,7 +230,7 @@ namespace Api.Controllers
                         userRepo.Update(user);
                         userRepo.SaveChanges();
                         Helper.AppHttpContext.HttpContext.Session.SetObject<long>("currentUserId", user.Id);
-                        return RedirectToLocal("/feed");
+                        return Redirect(_configuration.GetValue<string>("RedirectFront"));
                     }
                 }
                 catch(Exception e)
@@ -325,7 +325,7 @@ namespace Api.Controllers
 
             Response.Cookies.Append(".Amstramgram.Cookie", userDB.AccessToken);
 
-            return RedirectToLocal("/feed");
+            return Redirect(_configuration.GetValue<string>("RedirectFront"));
         }
 
         [HttpGet]
