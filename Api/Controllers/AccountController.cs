@@ -55,8 +55,8 @@ namespace Api.Controllers
         [Route("/")]
         public async Task<IActionResult> Index()
         {
-            await Helper.AppHttpContext.HttpContext.Session.LoadAsync();
-            await Helper.AppHttpContext.HttpContext.Session.CommitAsync();
+            if (Users.IsConnected())
+                return RedirectToLocal("/feed");
             return View("Login");
         }
 
