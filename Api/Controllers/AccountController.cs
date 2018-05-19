@@ -52,7 +52,7 @@ namespace Api.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("users/sign_in")]
+        [Route("/")]
         public async Task<IActionResult> Index()
         {
             await Helper.AppHttpContext.HttpContext.Session.LoadAsync();
@@ -256,6 +256,7 @@ namespace Api.Controllers
 
         [HttpGet]
         [AllowAnonymous]
+        [Route("/users/lockout")]
         public IActionResult Lockout()
         {
             return View();
@@ -264,6 +265,7 @@ namespace Api.Controllers
         //
         // GET /Account/AccessDenied
         [HttpGet]
+        [Route("/users/denied")]
         public IActionResult AccessDenied()
         {
             return View();
@@ -287,7 +289,7 @@ namespace Api.Controllers
             }
             else
             {
-                return RedirectToAction(nameof(HomeController.Index), "Home");
+                return RedirectToAction("Index");
             }
         }
 
