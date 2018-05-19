@@ -84,8 +84,7 @@ namespace Data.Repositories
 
         public virtual void Update(TEntity entity)
         {
-            _db.Set<TEntity>().Attach(entity);
-            _db.Entry(entity).State = EntityState.Modified;
+            _db.Set<TEntity>().Update(entity);
         }
     }
 }
