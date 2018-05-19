@@ -148,6 +148,7 @@ namespace Api.Controllers
                 Gender = currentUser.Gender ?? "",
                 Nickname = currentUser.UserName ?? $"{currentUser.FirstName.ToLower()}.{currentUser.LastName.ToLower()}",
                 Picture = currentUser.PictureUrl ?? "",
+                Phone = "",
                 Password = "",
                 Private = true
             };
@@ -157,22 +158,27 @@ namespace Api.Controllers
         [HttpPost]
         [AllowConnection]
         [Route("/sign_in")]
-        public async Task<IActionResult> SignIn(SignInViewModel model)
+        public async Task<IActionResult> SignIn(string EmailSign, string PasswordSign)
         {
-            if (ModelState.IsValid && model != null)
+            if (ModelState.IsValid)
             {
+                if (EmailSign == null || EmailSign == "" || PasswordSign == null || PasswordSign == "")
+                {
+                    ViewData["Error"] = "Field missing";
+                    return RedirectToAction("Index");
+                }
                 using (AmstramgramContext ctx = new AmstramgramContext())
                 {
                     var userRepo = new Data.Repositories.UserRepository(ctx, null);
                     Core.Models.User user = new Core.Models.User
                     {
-                        Email = model.Email,
-                        Password = Users.HashPassword(model.Password)
+                        Email = EmailSign,
+                        Password = Users.HashPassword(PasswordSign)
                     };
-                    user = await userRepo.SignInUser(user);
-                    if (user == null)
+                    Core.Models.User userInDb = await userRepo.SignInUser(user);
+                    if (userInDb == null || userInDb.Id == 0)
                         return RedirectToLocal("/");
-                    Helper.AppHttpContext.HttpContext.Session.SetObject<long>("currentUserId", user.Id);
+                    Helper.AppHttpContext.HttpContext.Session.SetObject<long>("currentUserId", userInDb.Id);
                     return RedirectToLocal("/feed");
                 }
             }
@@ -189,32 +195,48 @@ namespace Api.Controllers
         {
             if (ModelState.IsValid && model != null)
             {
-                using (AmstramgramContext ctx = new AmstramgramContext())
+                if (model.Email == null || model.Email == "" || model.Firstname == null 
+                    || model.Firstname == "" || model.Lastname == null || model.Lastname == "" || model.Password == null || model.Password == "")
                 {
-                    var userRepo = new Data.Repositories.UserRepository(ctx, null);
-                    Core.Models.User user = new Core.Models.User
+                    ViewData["Error"] = "Field missing";
+                    return RedirectToAction("Index");
+                }
+                try
+                {
+                    var test = Users.HashPassword(model.Password);
+                    var test2 = Users.HashPassword(model.Password);
+                    using (AmstramgramContext ctx = new AmstramgramContext())
                     {
-                        Email = model.Email,
-                        Password = Users.HashPassword(model.Password),
-                        Firstname = model.Firstname,
-                        Lastname = model.Lastname,
-                        Nickname = $"{model.Firstname.ToLower()}.{model.Lastname.ToLower()}",
-                        Description = "",
-                        Gender = "",
-                        Phone = "",
-                        Picture = "",
-                        Private = true
-                    };
-                    user = userRepo.Add(user);
-                    userRepo.SaveChanges();
-                    user.objectID = user.Id.ToString();
-                    AlgoliaClient algolia = new AlgoliaClient("A71NP8C36C", "ac1a68327b713553e3d21307968adab7");
-                    Index usersIndex = algolia.InitIndex("Amstramgram_users");
-                    usersIndex.AddObject(user);
-                    userRepo.Update(user);
-                    userRepo.SaveChanges();
-                    Helper.AppHttpContext.HttpContext.Session.SetObject<long>("currentUserId", user.Id);
-                    return RedirectToLocal("/feed");
+                        var userRepo = new Data.Repositories.UserRepository(ctx, null);
+                        Core.Models.User user = new Core.Models.User
+                        {
+                            Email = model.Email,
+                            Password = Users.HashPassword(model.Password),
+                            Firstname = model.Firstname,
+                            Lastname = model.Lastname,
+                            Nickname = $"{model.Firstname.ToLower()}.{model.Lastname.ToLower()}",
+                            Description = "",
+                            Gender = "",
+                            Phone = "",
+                            Picture = "",
+                            Private = true
+                        };
+                        user = userRepo.Add(user);
+                        userRepo.SaveChanges();
+                        user.objectID = user.Id.ToString();
+                        AlgoliaClient algolia = new AlgoliaClient("A71NP8C36C", "ac1a68327b713553e3d21307968adab7");
+                        Index usersIndex = algolia.InitIndex("Amstramgram_users");
+                        usersIndex.AddObject(user);
+                        userRepo.Update(user);
+                        userRepo.SaveChanges();
+                        Helper.AppHttpContext.HttpContext.Session.SetObject<long>("currentUserId", user.Id);
+                        return RedirectToLocal("/feed");
+                    }
+                }
+                catch(Exception e)
+                {
+                    ViewData["Error"] = "Impossible to save the current user";
+                    return RedirectToAction("Index");
                 }
             }
             else

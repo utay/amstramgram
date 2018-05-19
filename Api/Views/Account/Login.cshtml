@@ -4,7 +4,9 @@
 @using Microsoft.AspNetCore.Http.Authentication
 @using Data
 @using Microsoft.AspNetCore.Identity
+@using Api.Models
 @inject SignInManager<Data.ApplicationUser> SignInManager
+@model Api.Models.RegisterViewModel
 
 @{
     ViewData["Title"] = "Log in";
@@ -17,16 +19,22 @@
 </head>
 <body>
     <div class="panels-wrapper">
-        <img src="/logo.png" style="position: absolute; left: 50%; margin-left: -365px; margin-top: 25px;"/>
+        <img src="/logo.png" style="position: absolute; left: 50%; margin-left: -365px; margin-top: 25px;" />
         <div class="panels">
             <div class="panel">
-                <h2>First time here?</h2>
-                <input placeholder="Email" />
-                <input placeholder="Firstname" />
-                <input placeholder="Lastname" />
-                <input placeholder="Password" type="password" />
-                <button class="panel-button">Sign up</button>
+                <form asp-route-returnurl="@ViewData["ReturnUrl"]" action="/register" method="post" class="form-horizontal">
+                    <h2>First time here?</h2>
+                    <input name="Email" for="Email" placeholder="Email" />
+                    <input name="Firstname" for="Firstname" placeholder="Firstname" />
+                    <input name="Lastname" for="Lastname" placeholder="Lastname" />
+                    <input name="Password" for="Password" placeholder="Password" type="password" />
+                    <button type="submit" class="panel-button">Sign up</button>
+                </form>
                 <p style="margin: 0 10px">By signing up, you agree to our <b>Terms</b> & <b>Privacy Policy</b>.</p>
+                @if (ViewData["Error"] != null && ViewData["Error"].ToString() != "")
+                {
+                    @Html.Label(ViewData["Error"].ToString(), "error", "")
+                }
             </div>
 
             <div class="panel">
@@ -46,105 +54,107 @@
                     </form>
                 }
                 OR
-                <div>
-                    <input placeholder="Email" />
-                    <input placeholder="Password" type="password" />
-                    <button class="panel-button">Sign in</button>
-                </div>
+                    <div>
+                        <form asp-route-returnurl="@ViewData["ReturnUrl"]" action="/sign_in" method="post" class="form-horizontal">
+                            <input name="EmailSign" for="EmailSign" placeholder="Email" />
+                            <input name="PasswordSign" for="PasswordSign" placeholder="Password" type="password" />
+                            <button class="panel-button">Sign in</button>
+                        </form>
+                    </div>
             </div>
         </div>
     </div>
 </body>
 </html>
-    @section Scripts {
-        @await Html.PartialAsync("_ValidationScriptsPartial")
-    }
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}
 
 <style>
-body {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-}
+    body {
+        font-family: "Avenir", Helvetica, Arial, sans-serif;
+    }
 
-.panels {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  text-align: center;
-  z-index: 5;
-  position: relative;
-}
+    .panels {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        text-align: center;
+        z-index: 5;
+        position: relative;
+    }
 
-.panels-wrapper:before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 70%;
-    background-image: linear-gradient(to top, #f5f4f3, #fff);
-    left: 0;
-    top: -80px;
-    z-index: 0;
-}
+    .panels-wrapper:before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 70%;
+        background-image: linear-gradient(to top, #f5f4f3, #fff);
+        left: 0;
+        top: -80px;
+        z-index: 0;
+    }
 
-.panels-wrapper:after {
-    content: '';
-    display: block;
-    position: absolute;
-    width: 100%;
-    height: 160px;
-    background: white;
-    -ms-transform: skewY(-5deg);
-    transform: skewY(-5deg);
-    z-index: 0;
-    top: 70%;
-    margin-top: -160px;
-    left: 0;
-    z-index: 0;
-}
+    .panels-wrapper:after {
+        content: '';
+        display: block;
+        position: absolute;
+        width: 100%;
+        height: 160px;
+        background: white;
+        -ms-transform: skewY(-5deg);
+        transform: skewY(-5deg);
+        z-index: 0;
+        top: 70%;
+        margin-top: -160px;
+        left: 0;
+        z-index: 0;
+    }
 
-.panel {
-  height: 400px;
-  float: left;
-  flex-basis: 20%;
-  border-radius: 6px;
-  box-shadow: 0 5px 15px rgba(112,128,175,0.7);
-  padding: 40px 10px;
-  position: relative;
-  background-color: white;
-}
+    .panel {
+        height: 400px;
+        float: left;
+        flex-basis: 20%;
+        border-radius: 6px;
+        box-shadow: 0 5px 15px rgba(112,128,175,0.7);
+        padding: 40px 10px;
+        position: relative;
+        background-color: white;
+    }
 
-.panel + .panel {
-    margin-left: 50px;
-}
+        .panel + .panel {
+            margin-left: 50px;
+        }
 
-.panel-button {
-    background-color: #3897F0;
-    padding: 10px;
-    width: 80%;
-    color: white;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    margin: 20px 0;
-}
+    .panel-button {
+        background-color: #3897F0;
+        padding: 10px;
+        width: 80%;
+        color: white;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        margin: 20px 0;
+    }
 
-.panel-fb {
-    color: #385185;
-    border: none;
-    cursor: pointer;
-    background-color: white;
-}
+    .panel-fb {
+        color: #385185;
+        border: none;
+        cursor: pointer;
+        background-color: white;
+    }
 
-.fb-icon {
-    color: #385185;
-}
+    .fb-icon {
+        color: #385185;
+    }
 
-.panel input {
-    display: block;
-    margin-top: 10px !important;
-    padding: 10px;
-    border: 2px solid #eeee;
-    border-radius: 4px;
-    margin: 0 auto;
-}
+    .panel input {
+        display: block;
+        margin-top: 10px !important;
+        padding: 10px;
+        border: 2px solid #eeee;
+        border-radius: 4px;
+        margin: 0 auto;
+    }
 </style>
