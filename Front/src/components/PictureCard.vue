@@ -1,6 +1,6 @@
 <template>
   <el-card
-    v-if="pictureData && !pictureData.user.private"
+    v-if="pictureData && (pictureData.user.id === $store.state.currentUser.id || !pictureData.user.private)"
     :style="`
     margin: 0 auto;
     width: 40%;
