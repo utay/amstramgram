@@ -14,16 +14,36 @@
           :body-style="{'text-align': 'left'}">
           <div
             slot="header"
-            style="text-align: left;">
-            <span>{{ user.firstname }} {{ user.lastname }}</span>
-            <el-button 
-              type="primary"
-              style="float: right; padding: 4px 0"
-              icon="el-icon-back"/>
+            class="center-vertically">
+            <span class="flex">{{ user.firstname }} {{ user.lastname }} </span>
+            <span class="flex legend">@{{ user.nickname }}</span>
+            <div
+              v-if="currentUserProfile"
+              style="margin-left: auto"
+              class="flex">
+              <el-button
+                round
+                size="small"
+                style="margin-left: auto"
+                type="primary"
+                @click="$router.push({name: 'settings'})">Update profile
+              </el-button>
+              <el-button
+                round
+                size="small"
+                type="primary"
+                style="margin-left: auto"
+                icon="el-icon-back"/> 
+            </div>
             <el-button
-              v-if="myProfile"
-              style="float: right; padding: 3px 10px"
-              type="text">Update profile</el-button>
+              v-else
+              :type="followed ? 'primary' : ''"
+              round
+              style="margin-left: auto"
+              icon="el-icon-plus"
+              @click="toggleFollowUser(id)">
+              {{ followed ? "Unfollow": "Follow" }}
+            </el-button>
           </div>
           <div>
             <span>{{ user.pictures.length }}</span> Publications
@@ -55,76 +75,81 @@
 
 <script>
 import { getUser } from "@/api/user";
+import {
+  followUser,
+  unfollowUser,
+} from "@/api/user";
 
 export default {
   props: {
     id: {
-      type: Number,
-      default: 1,
+      type: [Number, String],
+      default: 1
     }
   },
 
   data() {
     return {
-      user: {
-        id: 1,
-        nickname: "feedthejim",
-        email: "toto@tata.fr",
-        password: "??",
-        firstname: "Lai",
-        lastname: "Jimmy",
-        picture: "https://picsum.photos/200",
-        phone: "0339302",
-        gender: true,
-        description: "dqzdqz",
-        private: true,
-        pictures: [
-          {
-            image: "https://picsum.photos/200"
-          },
-          {
-            image: "https://picsum.photos/200"
-          },
-          {
-            image: "https://picsum.photos/200"
-          },
-          {
-            image: "https://picsum.photos/200"
-          }
-        ],
-        followers: [
-          {
-            user: {
-              id: "toot"
-            }
-          }
-        ],
-        following: [
-          {
-            user: {
-              id: "tooo"
-            }
-          }
-        ]
-      },
+      user: {},
       myProfile: false,
       isLoading: true
     };
   },
 
+  computed: {
+    currentUserProfile() {
+      return this.$store.state.currentUser.id === +this.id;
+    },
+
+    followed(){
+      return !!this.$store.state.currentUser
+        .following.find(user => user.id === this.pictureData.user.id);
+    },
+  },
+
   async created() {
-    this.myProfile = this.id !== undefined;
-    const id = this.myProfile ? this.id : this.$route.params.id;
-    const response = await getUser(id);
-    this.user = response.user || this.user;
+    this.isLoading = true;
+    if (!this.currentUserProfile) {
+      const response = await getUser(this.id);
+      this.user = response.user;
+    } else {
+      this.user = this.$store.state.currentUser;
+    }
     this.isLoading = false;
+  },
+
+  methods: {   
+    async toggleFollowUser(id) {
+      if (this.followed) {
+        await unfollowUser(id, this.$store.state.currentUser.id);
+      } else {
+        await followUser(id, this.$store.state.currentUser.id);
+      }
+      this.$store.dispatch("connectUser");
+    }
   }
 };
 </script>
 
 <style scoped>
+.center-vertically {
+  display: flex;
+  align-items: center;
+  /* flex-direction: column; */
+  justify-content: flex-start;
+}
+
+.legend {
+  font-size: 13px;
+  color: #999;
+}
+
 .image {
   width: 100%;
+}
+
+.flex {
+  display: flex;
 }
 
 .image-profile {

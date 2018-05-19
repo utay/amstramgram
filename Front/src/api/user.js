@@ -35,7 +35,9 @@ export async function getUser(id) {
 
 
 export async function getCurrentUser() {
-  const response = await axios.get("https://amstramgram.insideapp.io/me");
+  const response = await axios.get("https://amstramgram.insideapp.io/me", {
+    withCredentials: true,
+  });
   return response.data;
 }
 
@@ -74,6 +76,32 @@ export const updateUser = async (form) => {
       private:${form.private},
     }) {
       nickname
+    }
+  }`);
+};
+
+export const followUser = async (followedId, followerId) => {
+  return await query(`mutation {
+    createFollower(follower:{
+      userId:${followerId},
+      followerId:${followedId},
+    }) {
+      user{
+        nickname
+      }
+    }
+  }`);
+};
+
+export const unfollowUser = async (followedId, followerId) => {
+  return await query(`mutation {
+    deleteFollower(follower:{
+      userId:${followerId},
+      followerId:${followedId},
+    }) {
+      user{
+        nickname
+      }
     }
   }`);
 };
