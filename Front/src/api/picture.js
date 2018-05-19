@@ -102,7 +102,7 @@ export async function createPicture(data) {
     createPicture(picture: {
       image: "${data.url}",
       description: "${data.description}",
-      userId: ${1},
+      userId: ${data.id},
       tags: [${data.tags.map(tag => `{text:"${tag}"}`)}],
       color: "${data.color}"
     }) {

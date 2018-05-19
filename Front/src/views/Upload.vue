@@ -160,7 +160,8 @@ export default {
           url: this.image.url,
           description: this.image.description,
           tags: this.image.tags,
-          color: this.image.color
+          color: this.image.color,
+          id: this.$store.state.currentUser.id,
         });
         this.$emit("uploadDone");
         this.$notify({
