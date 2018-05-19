@@ -13,11 +13,19 @@
       <div
         :style="{ 'background-image': 'url(' + pictureData.user.picture + ')' }"
         class="round-icon flex" />
-      <a
-        href="#"
+      <router-link
+        :to="{name: 'user', params: { id: pictureData.user.id}}"
         class="flex nickname header">
         {{ pictureData.user.nickname }}
-      </a>
+      </router-link>
+      <el-button
+        :type="followed ? 'primary' : ''"
+        round
+        style="margin-left: auto"
+        icon="el-icon-plus"
+        @click="toggleFollowUser(pictureData.user.id)">
+        {{ followed ? "Unfollow": "Follow" }}
+      </el-button>
     </div>
     <img
       :src="pictureData.image"
@@ -34,11 +42,11 @@
         {{ likesPhrase }}
       </el-button>
       <div>
-        <a
-          href="#"
+        <router-link
+          :to="{name: 'user', params: { id: pictureData.user.id}}"
           class="nickname">
           <span>{{ pictureData.user.nickname }}</span>
-        </a>
+        </router-link>
         <span class="legend">{{ pictureData.description }} </span>
         <el-button
           v-for="(tag, i) in pictureData.tags"
@@ -53,11 +61,12 @@
         v-for="(comment, i) of orderedComments"
         v-if="i < 5 || showMore"
         :key="i">
-        <a
-          class="nickname"
-          href="#">
-          <span>{{ comment.user.nickname }}</span>
-        </a>
+        
+        <router-link
+          :to="{name: 'user', params: { id: comment.user.id}}"
+          class="nickname">
+          {{ comment.user.nickname }}
+        </router-link>
         <span class="legend">{{ comment.text }}</span>
         <span class="time pull-right">{{ comment.createdAt | fromNow }}</span>
       </div>
@@ -93,13 +102,13 @@
         <div 
           :style="{ 'background-image': 'url(' + like.user.picture + ')' }"
           class="round-icon flex" />
-        <div
+        
+        <router-link
+          :to="{name: 'user', params: { id: like.user.id}}"
           class="flex nickname header black-text">
-          <div>
-            <span class="nickname-text">{{ like.user.nickname }}</span>
-            <span class="time">{{ like.createdAt | fromNow }}</span>
-          </div>
-        </div>
+          {{ like.user.nickname }}
+        </router-link>
+        <span class="time pull-right">{{ like.createdAt | fromNow }}</span>
       </div>
     </el-dialog>
   </el-card>
@@ -114,6 +123,11 @@ import {
   deleteLike,
   getPicture
 } from "@/api/picture";
+import {
+  followUser,
+  unfollowUser,
+} from "@/api/user";
+
 import _ from "lodash";
 
 export default {
@@ -145,6 +159,11 @@ export default {
   },
 
   computed: {
+    followed(){
+      return !!this.$store.state.currentUser
+        .following.find(user => user.id === this.pictureData.user.id);
+    },
+
     liked() {
       if (!this.$store.getters.isConnected) return false;
       return !!this.likes.find(like => {
@@ -177,6 +196,7 @@ export default {
       }
       await this.refreshPicture();
     },
+    
     async createComment() {
       await createComment(
         this.comment,
@@ -186,10 +206,20 @@ export default {
       await this.refreshPicture();
       this.comment = "";
     },
+    
     async refreshPicture() {
       const response = await getLikesAndComments(this.pictureData.id);
       this.likes = response.picture.likes;
       this.comments = response.picture.comments;
+    },
+    
+    async toggleFollowUser(id) {
+      if (this.followed) {
+        await unfollowUser(id, this.$store.state.currentUser.id);
+      } else {
+        await followUser(id, this.$store.state.currentUser.id);
+      }
+      this.$store.dispatch("connectUser");
     }
   }
 };
