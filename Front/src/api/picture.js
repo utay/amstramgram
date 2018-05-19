@@ -35,6 +35,7 @@ export async function getPicture(id) {
       updatedAt
       user {
         id
+        private
         nickname
         picture
       }

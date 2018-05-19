@@ -1,6 +1,6 @@
 <template>
   <el-card
-    v-if="pictureData"
+    v-if="pictureData && !pictureData.user.private"
     :style="`
     margin: 0 auto;
     width: 40%;

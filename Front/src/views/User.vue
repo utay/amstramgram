@@ -24,13 +24,6 @@
               <el-button
                 round
                 size="small"
-                style="margin-left: auto"
-                type="primary"
-                @click="$router.push({name: 'settings'})">Update profile
-              </el-button>
-              <el-button
-                round
-                size="small"
                 type="primary"
                 style="margin-left: auto"
                 icon="el-icon-back"/> 
