@@ -23,6 +23,7 @@ using Microsoft.AspNetCore.Authentication.Facebook;
 using Api.Helper;
 using System;
 using Microsoft.AspNetCore.HttpOverrides;
+using Api.Controllers;
 //using Core.Logic;
 
 namespace Api
@@ -75,7 +76,10 @@ namespace Api
                 options.Cookie.Path = "/";
             });
 
-            services.AddMvc();
+            services.AddMvc(options =>
+            {
+                options.Filters.Add(typeof(ConnectionFilter));
+            });
             services.AddSingleton<IConfiguration>(Configuration);
 
 
