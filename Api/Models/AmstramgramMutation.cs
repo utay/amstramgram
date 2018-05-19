@@ -186,7 +186,7 @@ namespace Api.Models
                     {
                         return null;
                     }
-                    if (userFollowerRepository.Find(data.UserId, data.FollowerId).Result != null)
+                    if (userFollowerRepository.Find(data.UserId, data.FollowerId) != null)
                     {
                         return null;
                     }
@@ -208,7 +208,7 @@ namespace Api.Models
                     {
                         return null;
                     }
-                    var follower = userFollowerRepository.Find(data.UserId, data.FollowerId).Result;
+                    var follower = userFollowerRepository.Find(data.UserId, data.FollowerId);
                     if (follower == null)
                     {
                         return null;

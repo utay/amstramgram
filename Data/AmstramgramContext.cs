@@ -24,7 +24,7 @@ namespace Data
             //Database.Migrate();
         }
 
-        public AmstramgramContext(DbContextOptions options) 
+        public AmstramgramContext(DbContextOptions options)
             : base(options)
         {
         }
@@ -73,7 +73,6 @@ namespace Data
 
             // likes
             modelBuilder.Entity<Like>().HasKey(l => l.Id);
-
             modelBuilder.Entity<Like>().Property(c => c.Id).ValueGeneratedOnAdd();
 
             modelBuilder.Entity<Like>()
@@ -89,6 +88,7 @@ namespace Data
             // comments
             modelBuilder.Entity<Comment>().HasKey(c => c.Id);
             modelBuilder.Entity<Comment>().Property(c => c.Id).ValueGeneratedOnAdd();
+
             modelBuilder.Entity<Comment>()
                 .HasOne(c => c.Picture)
                 .WithMany(p => p.Comments)
@@ -100,7 +100,8 @@ namespace Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             // user-followers
-            modelBuilder.Entity<UserFollower>().HasKey(f => new { f.UserId, f.FollowerId });
+            modelBuilder.Entity<UserFollower>().HasKey(c => c.Id);
+            modelBuilder.Entity<UserFollower>().Property(c => c.Id).ValueGeneratedOnAdd();
 
             modelBuilder.Entity<UserFollower>()
                 .HasOne(f => f.User)

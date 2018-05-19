@@ -19,7 +19,7 @@ namespace Data.Repositories
         public Like Find(long userId, long pictureId)
         {
             return _db.Set<Like>()
-                .Where(l => l.UserId.Equals(userId) 
+                .Where(l => l.UserId.Equals(userId)
                     && l.PictureId.Equals(pictureId))
                 .FirstOrDefault();
         }
