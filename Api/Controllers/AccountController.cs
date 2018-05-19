@@ -154,6 +154,75 @@ namespace Api.Controllers
             return user;
         }
 
+        [HttpPost]
+        [AllowConnection]
+        [Route("/sign_in")]
+        public async Task<IActionResult> SignIn(SignInViewModel model)
+        {
+            if (ModelState.IsValid && model != null)
+            {
+                using (AmstramgramContext ctx = new AmstramgramContext())
+                {
+                    var userRepo = new Data.Repositories.UserRepository(ctx, null);
+                    Core.Models.User user = new Core.Models.User
+                    {
+                        Email = model.Email,
+                        Password = Users.HashPassword(model.Password)
+                    };
+                    user = await userRepo.SignInUser(user);
+                    if (user == null)
+                        return RedirectToLocal("/");
+                    Helper.AppHttpContext.HttpContext.Session.SetObject<long>("currentUserId", user.Id);
+                    return RedirectToLocal("/feed");
+                }
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost]
+        [AllowConnection]
+        [Route("/register")]
+        public IActionResult Register(RegisterViewModel model)
+        {
+            if (ModelState.IsValid && model != null)
+            {
+                using (AmstramgramContext ctx = new AmstramgramContext())
+                {
+                    var userRepo = new Data.Repositories.UserRepository(ctx, null);
+                    Core.Models.User user = new Core.Models.User
+                    {
+                        Email = model.Email,
+                        Password = Users.HashPassword(model.Password),
+                        Firstname = model.Firstname,
+                        Lastname = model.Lastname,
+                        Nickname = $"{model.Firstname.ToLower()}.{model.Lastname.ToLower()}",
+                        Description = "",
+                        Gender = "",
+                        Phone = "",
+                        Picture = "",
+                        Private = true
+                    };
+                    user = userRepo.Add(user);
+                    userRepo.SaveChanges();
+                    user.objectID = user.Id.ToString();
+                    AlgoliaClient algolia = new AlgoliaClient("A71NP8C36C", "ac1a68327b713553e3d21307968adab7");
+                    Index usersIndex = algolia.InitIndex("Amstramgram_users");
+                    usersIndex.AddObject(user);
+                    userRepo.Update(user);
+                    userRepo.SaveChanges();
+                    Helper.AppHttpContext.HttpContext.Session.SetObject<long>("currentUserId", user.Id);
+                    return RedirectToLocal("/feed");
+                }
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
         [HttpGet]
         [AllowConnection]
         [Route("signin-facebook")]
