@@ -28,7 +28,8 @@
     </el-form-item>
     <el-form-item>
       <el-button
-        type="primary" 
+        :loading="loading" 
+        type="primary"
         @click="onSubmit">Update your profile</el-button>
     </el-form-item>
   </el-form>
