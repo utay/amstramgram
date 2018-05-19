@@ -171,9 +171,11 @@ namespace Api
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            app.UseCors(
-                options => options.WithOrigins("http://localhost:8080", "http://localhost:5000", "https://app.amstramgram.insideapp.io").AllowAnyMethod().AllowAnyHeader().AllowCredentials()
-            );
+            app.UseCors(builder => builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
 
             app.UseSession();
 
