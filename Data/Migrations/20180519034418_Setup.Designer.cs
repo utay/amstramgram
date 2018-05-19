@@ -11,9 +11,10 @@ using System;
 namespace Data.Migrations
 {
     [DbContext(typeof(AmstramgramContext))]
-    partial class AmstramgramContextModelSnapshot : ModelSnapshot
+    [Migration("20180519034418_Setup")]
+    partial class Setup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
