@@ -28,14 +28,6 @@
       <el-menu-item index="5">
         <el-dropdown
           @command="e => $router.push({name: 'picture', params: { id: e}})">
-          <el-badge
-            :value="100"
-            :max="10"
-            class="item">
-            <i
-              style="font-size: 1.2rem"
-              class="fas fa-heart fa-2x"/>
-          </el-badge>
           <el-dropdown-menu
             slot="dropdown">
             <el-dropdown-item

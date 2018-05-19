@@ -26,7 +26,8 @@
                 size="small"
                 type="primary"
                 style="margin-left: auto"
-                icon="el-icon-back"/> 
+                icon="el-icon-back"
+                @click="logout"/> 
             </div>
             <el-button
               v-else
@@ -111,7 +112,10 @@ export default {
     this.isLoading = false;
   },
 
-  methods: {   
+  methods: {
+    logout(){
+      window.location.href = "https://amstramgram.insideapp.io/users/logout";
+    },
     async toggleFollowUser(id) {
       if (this.followed) {
         await unfollowUser(id, this.$store.state.currentUser.id);
