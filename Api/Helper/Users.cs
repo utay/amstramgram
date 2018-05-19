@@ -8,6 +8,12 @@ namespace Api.Helper
 {
     public class Users
     {
+        public static bool IsConnected()
+        {
+            return AppHttpContext.HttpContext.Request.Cookies.TryGetValue(".Amstramgram.Cookie", out string accessToken)
+                || AppHttpContext.HttpContext.Session.TryGetValue("currentUserId", out byte[] id);
+        }
+
         public static string HashPassword(string password)
         {
             byte[] salt;

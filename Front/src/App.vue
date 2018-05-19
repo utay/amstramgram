@@ -4,8 +4,10 @@
       <el-header>
         <Navbar/>
       </el-header>
-      <el-main>
-        <router-view/>
+      <el-main
+        v-loading.fullscreen.lock="!$store.getters.isConnected">
+        <router-view
+          v-if="$store.getters.isConnected"/>
       </el-main>
     </el-container>
   </div>
@@ -22,7 +24,7 @@ export default {
 
   async created() {
     // store.dispatch("createUser");
-    store.dispatch("connectUser", 1);
+    store.dispatch("connectUser");
   }
 };
 </script>

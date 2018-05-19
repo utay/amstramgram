@@ -27,7 +27,6 @@ using Microsoft.Extensions.Configuration;
 
 namespace Api.Controllers
 {
-    [Authorize]
     [Route("")]
     public class AccountController : Controller
     {
@@ -51,17 +50,17 @@ namespace Api.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
-        [Route("users/sign_in")]
-        public async Task<IActionResult> Index()
+        [AllowConnection]
+        [Route("/")]
+        public IActionResult Index()
         {
-            await Helper.AppHttpContext.HttpContext.Session.LoadAsync();
-            await Helper.AppHttpContext.HttpContext.Session.CommitAsync();
+            if (Users.IsConnected())
+                return RedirectToLocal("/feed");
             return View("Login");
         }
 
         [HttpGet]
-        [AllowAnonymous]
+        [AllowConnection]
         [Route("me")]
         public IActionResult Me()
         {
@@ -88,7 +87,7 @@ namespace Api.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
+        [AllowConnection]
         [Route("auth/facebook")]
         public async Task<IActionResult> FacebookLogin(string returnUrl = null)
         {
@@ -156,7 +155,7 @@ namespace Api.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
+        [AllowConnection]
         [Route("signin-facebook")]
         public async Task<IActionResult> FacebookLoginCallback(string returnUrl = null, string remoteError = null)
         {
@@ -239,7 +238,6 @@ namespace Api.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         [Route("users/logout")]
         public async Task<IActionResult> Logout()
         {
@@ -255,7 +253,8 @@ namespace Api.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
+        [AllowConnectionAttribute]
+        [Route("/users/lockout")]
         public IActionResult Lockout()
         {
             return View();
@@ -264,6 +263,8 @@ namespace Api.Controllers
         //
         // GET /Account/AccessDenied
         [HttpGet]
+        [AllowConnectionAttribute]
+        [Route("/users/denied")]
         public IActionResult AccessDenied()
         {
             return View();
@@ -287,7 +288,7 @@ namespace Api.Controllers
             }
             else
             {
-                return RedirectToAction(nameof(HomeController.Index), "Home");
+                return RedirectToAction("Index");
             }
         }
 

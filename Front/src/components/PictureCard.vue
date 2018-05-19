@@ -25,9 +25,12 @@
     <div style="padding: 14px;">
       <el-button
         :icon="`el-icon-circle-check${liked ? '' : '-outline'}`"
+        circle
+        @click="toggleLikePicture"/>
+      <el-button 
         type="text"
         style=""
-        @click="toggleLikePicture">
+        @click="likesVisible = true">
         {{ likesPhrase }}
       </el-button>
       <div>
@@ -42,7 +45,7 @@
           :key="i"
           class="tags"
           type="text">
-          #{{ tag.Text }}
+          #{{ tag.text }}
         </el-button>
         <span class="time pull-right">{{ pictureData.createdAt | fromNow }}</span>
       </div>
@@ -79,6 +82,26 @@
           @click="createComment"/>
       </el-input>
     </div>
+    <el-dialog
+      :visible.sync="likesVisible"
+      title="Likes"
+      width="30%">
+      <div
+        v-for="(like, i) of pictureData.likes"
+        :key="i"
+        class="center-vertically">
+        <div 
+          :style="{ 'background-image': 'url(' + like.user.picture + ')' }"
+          class="round-icon flex" />
+        <div
+          class="flex nickname header black-text">
+          <div>
+            <span class="nickname-text">{{ like.user.nickname }}</span>
+            <span class="time">{{ like.createdAt | fromNow }}</span>
+          </div>
+        </div>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -116,7 +139,8 @@ export default {
       comments: [],
       comment: "",
       showMore: false,
-      pictureData: null
+      pictureData: null,
+      likesVisible: false,
     };
   },
 
@@ -138,21 +162,9 @@ export default {
   },
 
   async created() {
-    if (this.id) {
-      const res = await getPicture(+this.id);
-      this.pictureData = res.picture;
-    } else {
-      this.pictureData = _.transform(this.picture, (result, val, key) => {
-        result[key.toLowerCase()] = val;
-      });
-      this.pictureData.user = _.transform(
-        this.pictureData.user,
-        (result, val, key) => {
-          result[key.toLowerCase()] = val;
-        }
-      );
-    }
-
+    const res = await getPicture(this.id || this.picture.Id);
+    this.pictureData = res.picture;
+    console.log(res);
     await this.refreshPicture();
   },
 
@@ -184,6 +196,10 @@ export default {
 </script>
 
 <style scoped>
+.el-button.is-circle {
+  margin-bottom: 5px;
+  margin-right: 10px;
+}
 .header {
   padding-left: 10px;
   font-size: 18px;

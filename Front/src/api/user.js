@@ -1,4 +1,5 @@
 import { query } from "./index";
+import axios from "axios";
 
 export async function getUser(id) {
   return query(`{
@@ -32,14 +33,21 @@ export async function getUser(id) {
   }`);
 }
 
+
+export async function getCurrentUser() {
+  const response = await axios.get("https://amstramgram.insideapp.io/me");
+  return response.data;
+}
+
+
 export const createUser = async () => {
   return await query(`mutation {
     createUser(user:{
-      nickname:"utay",
+      nickname:"feedthejim",
       email:"yannickutard@gmail.com",
       password:"password",
-      firstname:"Yannick",
-      lastname:"Utard",
+      firstname:"Jim",
+      lastname:"Lai",
       picture:"http://cdn-europe1.new2.ladmedia.fr/var/europe1/storage/images/le-lab/francois-hollande-ne-va-pas-partir-aux-champignons-fin-mai-selon-jean-christophe-cambadelis-2980766/33011039-1-fre-FR/Francois-Hollande-ne-va-pas-partir-aux-champignons-fin-mai-selon-Jean-Christophe-Cambadelis.jpg",
       phone:"06 tamere",
       gender:"male",
@@ -50,6 +58,26 @@ export const createUser = async () => {
     }
   }`);
 };
+
+export const updateUser = async (form) => {
+  return await query(`mutation {
+    updateUser(user:{
+      nickname:"${form.nickname}",
+      email:"${form.email}",
+      password:"${form.password}",
+      firstname:"${form.firstname}",
+      lastname:"${form.lastname}",
+      picture:"${form.picture}",
+      phone:"${form.phone}",
+      gender:"${form.gender}",
+      description:"${form.description}",
+      private:${form.private},
+    }) {
+      nickname
+    }
+  }`);
+};
+
 
 export const getAllCommentsAndLikes = async (id) => {
   const { user } = await query(`{
