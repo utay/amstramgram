@@ -26,11 +26,15 @@
           class="fas fa-cog fa-2x"/>
       </el-menu-item>
       <el-menu-item index="5">
-        <i
-          style="font-size: 1.2rem"
-          class="fas fa-heart fa-2x"/>
+        <el-badge
+          :value="100"
+          :max="10"
+          class="item">
+          <i
+            style="font-size: 1.2rem"
+            class="fas fa-heart fa-2x"/>
+        </el-badge>
         <el-dropdown
-          v-if="!notifications"
           @command="e => $router.push({name: 'picture', params: { id: e}})">
           <el-dropdown-menu
             slot="dropdown">

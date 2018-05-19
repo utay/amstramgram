@@ -9,7 +9,7 @@ namespace Api.Models
         public UserType(Core.Data.IUserRepository userRepository, IMapper mapper)
         {
             Name = "User";
-            Description = "A fucking user";
+            Description = "A super normal user";
 
             Field(x => x.Id).Description("The id of the user.");
             Field(x => x.Nickname, nullable: true).Description("The nickname of the user.");
