@@ -7,6 +7,8 @@ export async function getLikesAndComments(id) {
         text
         user {
           nickname
+          id
+          picture
         }
         createdAt
       }
@@ -15,6 +17,7 @@ export async function getLikesAndComments(id) {
         user {
           id
           nickname
+          picture
         }
       }
     }
@@ -31,6 +34,7 @@ export async function getPicture(id) {
       createdAt
       updatedAt
       user {
+        id
         nickname
         picture
       }
@@ -41,6 +45,8 @@ export async function getPicture(id) {
         text
         user {
           nickname
+          id
+          picture
         }
         createdAt
       }
@@ -49,6 +55,7 @@ export async function getPicture(id) {
         user {
           id
           nickname
+          picture
         }
       }
     }

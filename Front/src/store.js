@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import { getUser, getAllCommentsAndLikes, createUser } from "@/api/user";
+import { getCurrentUser, getAllCommentsAndLikes, createUser } from "@/api/user";
 
 Vue.use(Vuex);
 
@@ -32,9 +32,9 @@ export default new Vuex.Store({
     createUser: async () => {
       await createUser();
     },
-    connectUser: async (context, userId) => {
-      const { user } = await getUser(userId);
-      const notifications = await getAllCommentsAndLikes(userId);
+    connectUser: async (context, ) => {
+      const { user } = await getCurrentUser();
+      const notifications = await getAllCommentsAndLikes(user.id);
       context.commit("setUser", { user, notifications });
     },
   },

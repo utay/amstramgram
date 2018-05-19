@@ -7,6 +7,7 @@ import ElementUI from "element-ui";
 import InstantSearch from "vue-instantsearch";
 import VueObserveVisibility from "vue-observe-visibility";
 import PictureCard from "./components/PictureCard.vue";
+import Settings from "./views/Settings.vue";
 
 Vue.use(Router);
 Vue.use(ElementUI);
@@ -29,6 +30,11 @@ const router = new Router({
       path: "/user/:id",
       name: "user",
       component: User,
+    },
+    {
+      path: "/settings",
+      name: "settings",
+      component: Settings,
     },
     {
       path: "/picture/:id",
