@@ -22,6 +22,7 @@ using Facebook;
 using Microsoft.AspNetCore.Authentication.Facebook;
 using Api.Helper;
 using System;
+using Microsoft.AspNetCore.HttpOverrides;
 //using Core.Logic;
 
 namespace Api
