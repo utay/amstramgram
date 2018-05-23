@@ -96,7 +96,6 @@ namespace Api
             services.AddScoped<AmstramgramQuery>();
             services.AddScoped<AmstramgramMutation>();
 
-            services.AddTransient<IPictureRepository, PictureRepository>();
             services.AddTransient<ILikeRepository, LikeRepository>();
             services.AddTransient<ICommentRepository, CommentRepository>();
             services.AddTransient<IUserFollowerRepository, UserFollowerRepository>();

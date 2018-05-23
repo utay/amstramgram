@@ -15,8 +15,7 @@ namespace Api.Models
         {
         }
 
-        public AmstramgramMutation(Core.Data.IPictureRepository pictureRepository,
-            Core.Data.ICommentRepository commentRepository, Core.Data.ILikeRepository likeRepository,
+        public AmstramgramMutation(Core.Data.ICommentRepository commentRepository, Core.Data.ILikeRepository likeRepository,
             Core.Data.IUserFollowerRepository userFollowerRepository, IMapper mapper, IConfiguration configuration)
         {
             Name = "Mutation";
@@ -79,8 +78,7 @@ namespace Api.Models
                     var date = ((Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds).ToString();
                     data.CreatedAt = date;
                     data.UpdatedAt = date;
-                    var picture = pictureRepository.Add(data);
-                    pictureRepository.SaveChanges();
+                    var picture = DataAccess.Picture.Add(data);
                     foreach (var tag in data.Tags)
                     {
                         tagsIndex.AddObject(tag);
@@ -99,7 +97,7 @@ namespace Api.Models
                 resolve: context =>
                 {
                     var data = context.GetArgument<Core.Models.Comment>("comment");
-                    if (DataAccess.User.Get(data.UserId).Result == null || pictureRepository.Get(data.PictureId).Result == null)
+                    if (DataAccess.User.Get(data.UserId).Result == null || DataAccess.Picture.Get(data.PictureId).Result == null)
                     {
                         return null;
                     }
@@ -123,7 +121,7 @@ namespace Api.Models
                 resolve: context =>
                 {
                     var data = context.GetArgument<Core.Models.Comment>("comment");
-                    if (DataAccess.User.Get(data.UserId).Result == null || pictureRepository.Get(data.PictureId).Result == null)
+                    if (DataAccess.User.Get(data.UserId).Result == null || DataAccess.Picture.Get(data.PictureId).Result == null)
                     {
                         return null;
                     }
@@ -141,7 +139,7 @@ namespace Api.Models
                 resolve: context =>
                 {
                     var data = context.GetArgument<Core.Models.Like>("like");
-                    if (DataAccess.User.Get(data.UserId).Result == null || pictureRepository.Get(data.PictureId).Result == null)
+                    if (DataAccess.User.Get(data.UserId).Result == null || DataAccess.Picture.Get(data.PictureId).Result == null)
                     {
                         return null;
                     }
@@ -165,7 +163,7 @@ namespace Api.Models
                 resolve: context =>
                 {
                     var data = context.GetArgument<Core.Models.Like>("like");
-                    if (DataAccess.User.Get(data.UserId).Result == null || pictureRepository.Get(data.PictureId).Result == null)
+                    if (DataAccess.User.Get(data.UserId).Result == null || DataAccess.Picture.Get(data.PictureId).Result == null)
                     {
                         return null;
                     }

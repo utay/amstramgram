@@ -231,7 +231,7 @@ namespace Api.DataAccess
             }
         }
 
-        public static async Task<ICollection<Picture>> GetPictures(long id)
+        public static async Task<ICollection<Core.Models.Picture>> GetPictures(long id)
         {
             try
             {
@@ -244,7 +244,7 @@ namespace Api.DataAccess
             }
             catch
             {
-                return new List<Picture>();
+                return new List<Core.Models.Picture>();
             }
         }
 

@@ -16,7 +16,7 @@ namespace Api.Models
         {
         }
 
-        public AmstramgramQuery(Core.Data.IPictureRepository pictureRepository, IMapper mapper)
+        public AmstramgramQuery(IMapper mapper)
         {
             Name = "Query";
 
@@ -42,7 +42,7 @@ namespace Api.Models
                 resolve: context =>
                 {
                     var id = context.GetArgument<int>("id");
-                    var picture = pictureRepository.Get(id).Result;
+                    var picture = DataAccess.Picture.Get(id).Result;
                     var mapped = mapper.Map<Picture>(picture);
                     return mapped;
                 }
