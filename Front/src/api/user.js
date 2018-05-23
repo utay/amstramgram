@@ -64,6 +64,7 @@ export const createUser = async () => {
 export const updateUser = async (form) => {
   return await query(`mutation {
     updateUser(user:{
+      id:${form.id},
       nickname:"${form.nickname}",
       email:"${form.email}",
       password:"${form.password}",
