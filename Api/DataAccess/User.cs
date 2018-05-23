@@ -163,7 +163,7 @@ namespace Api.DataAccess
             }
         }
 
-        public static async Task<ICollection<UserFollower>> GetFollowers(long id)
+        public static async Task<ICollection<Core.Models.UserFollower>> GetFollowers(long id)
         {
             try
             {
@@ -176,11 +176,11 @@ namespace Api.DataAccess
             }
             catch
             {
-                return new List<UserFollower>();
+                return new List<Core.Models.UserFollower>();
             }
         }
 
-        public static async Task<ICollection<UserFollower>> GetFollowing(long id)
+        public static async Task<ICollection<Core.Models.UserFollower>> GetFollowing(long id)
         {
             try
             {
@@ -193,7 +193,7 @@ namespace Api.DataAccess
             }
             catch
             {
-                return new List<UserFollower>();
+                return new List<Core.Models.UserFollower>();
             }
         }
 

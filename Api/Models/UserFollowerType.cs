@@ -5,7 +5,7 @@ namespace Api.Models
 {
     public class UserFollowerType : ObjectGraphType<UserFollower>
     {
-        public UserFollowerType(Core.Data.IUserFollowerRepository userFollowerRepository, IMapper mapper)
+        public UserFollowerType(IMapper mapper)
         {
             Name = "UserFollower";
             Description = "A follower";
@@ -14,7 +14,7 @@ namespace Api.Models
                 "user",
                 resolve: context =>
                 {
-                    var userFollower = userFollowerRepository.GetUser(context.Source.Id).Result;
+                    var userFollower = DataAccess.UserFollower.GetUser(context.Source.Id).Result;
                     var mapped = mapper.Map<UserFollower>(userFollower);
                     return mapped;
                 }
@@ -24,7 +24,7 @@ namespace Api.Models
                 "follower",
                 resolve: context =>
                 {
-                    var userFollower = userFollowerRepository.GetFollower(context.Source.Id).Result;
+                    var userFollower = DataAccess.UserFollower.GetFollower(context.Source.Id).Result;
                     var mapped = mapper.Map<UserFollower>(userFollower);
                     return mapped;
                 }

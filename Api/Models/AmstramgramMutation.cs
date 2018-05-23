@@ -15,8 +15,7 @@ namespace Api.Models
         {
         }
 
-        public AmstramgramMutation(Core.Data.ICommentRepository commentRepository, Core.Data.ILikeRepository likeRepository,
-            Core.Data.IUserFollowerRepository userFollowerRepository, IMapper mapper, IConfiguration configuration)
+        public AmstramgramMutation(IMapper mapper, IConfiguration configuration)
         {
             Name = "Mutation";
 
@@ -107,8 +106,7 @@ namespace Api.Models
                     }
                     var date = ((Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds).ToString();
                     data.CreatedAt = date;
-                    var comment = commentRepository.Add(data);
-                    commentRepository.SaveChanges();
+                    var comment = DataAccess.Comment.Add(data);
                     return mapper.Map<Comment>(comment);
                 }
             );
@@ -125,8 +123,7 @@ namespace Api.Models
                     {
                         return null;
                     }
-                    commentRepository.Delete(data);
-                    commentRepository.SaveChanges();
+                    DataAccess.Comment.Delete(data);
                     return mapper.Map<Comment>(data);
                 }
             );
@@ -143,14 +140,13 @@ namespace Api.Models
                     {
                         return null;
                     }
-                    if (likeRepository.Find(data.UserId, data.PictureId) != null)
+                    if (DataAccess.Like.Find(data.UserId, data.PictureId) != null)
                     {
                         return null;
                     }
                     var date = ((Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds).ToString();
                     data.CreatedAt = date;
-                    var like = likeRepository.Add(data);
-                    likeRepository.SaveChanges();
+                    var like = DataAccess.Like.Add(data);
                     return mapper.Map<Like>(like);
                 }
             );
@@ -167,13 +163,12 @@ namespace Api.Models
                     {
                         return null;
                     }
-                    var like = likeRepository.Find(data.UserId, data.PictureId);
+                    var like = DataAccess.Like.Find(data.UserId, data.PictureId);
                     if (like == null)
                     {
                         return null;
                     }
-                    likeRepository.Delete(like);
-                    likeRepository.SaveChanges();
+                    DataAccess.Like.Delete(like);
                     return mapper.Map<Like>(like);
                 }
             );
@@ -194,12 +189,11 @@ namespace Api.Models
                     {
                         return null;
                     }
-                    if (userFollowerRepository.Find(data.UserId, data.FollowerId) != null)
+                    if (DataAccess.UserFollower.Find(data.UserId, data.FollowerId) != null)
                     {
                         return null;
                     }
-                    var follower = userFollowerRepository.Add(data);
-                    userFollowerRepository.SaveChanges();
+                    var follower = DataAccess.UserFollower.Add(data);
                     return mapper.Map<UserFollower>(follower);
                 }
             );
@@ -216,13 +210,12 @@ namespace Api.Models
                     {
                         return null;
                     }
-                    var follower = userFollowerRepository.Find(data.UserId, data.FollowerId);
+                    var follower = DataAccess.UserFollower.Find(data.UserId, data.FollowerId);
                     if (follower == null)
                     {
                         return null;
                     }
-                    userFollowerRepository.Delete(follower);
-                    userFollowerRepository.SaveChanges();
+                    DataAccess.UserFollower.Delete(follower);
                     return mapper.Map<UserFollower>(follower);
                 }
             );

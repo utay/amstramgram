@@ -96,10 +96,6 @@ namespace Api
             services.AddScoped<AmstramgramQuery>();
             services.AddScoped<AmstramgramMutation>();
 
-            services.AddTransient<ILikeRepository, LikeRepository>();
-            services.AddTransient<ICommentRepository, CommentRepository>();
-            services.AddTransient<IUserFollowerRepository, UserFollowerRepository>();
-
             if (Env.IsEnvironment("Test"))
             {
                 services.AddDbContext<AmstramgramContext>(options =>
