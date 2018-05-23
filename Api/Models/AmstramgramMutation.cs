@@ -5,23 +5,27 @@ using System;
 using Algolia.Search;
 using System.Security.Cryptography;
 using Newtonsoft.Json.Linq;
+using Microsoft.Extensions.Configuration;
 
 namespace Api.Models
 {
     public class AmstramgramMutation : ObjectGraphType
     {
-        public AmstramgramMutation() { }
+        public AmstramgramMutation()
+        {
+        }
 
-        public AmstramgramMutation(Core.Data.IUserRepository userRepository, Core.Data.IPictureRepository pictureRepository,
+        public AmstramgramMutation(Core.Data.IPictureRepository pictureRepository,
             Core.Data.ICommentRepository commentRepository, Core.Data.ILikeRepository likeRepository,
-            Core.Data.IUserFollowerRepository userFollowerRepository, IMapper mapper)
+            Core.Data.IUserFollowerRepository userFollowerRepository, IMapper mapper, IConfiguration configuration)
         {
             Name = "Mutation";
 
-            AlgoliaClient client = new AlgoliaClient("A71NP8C36C", "ac1a68327b713553e3d21307968adab7");
-            Index usersIndex = client.InitIndex("Amstramgram_users");
-            Index picturesIndex = client.InitIndex("Amstramgram_pictures");
-            Index tagsIndex = client.InitIndex("Amstramgram_tags");
+            AlgoliaClient client = new AlgoliaClient(configuration.GetValue<string>("Algolia:AppId"),
+                configuration.GetValue<string>("Algolia:AppSecret"));
+            Index usersIndex = client.InitIndex(configuration.GetValue<string>("Algolia:IndexUser"));
+            Index picturesIndex = client.InitIndex(configuration.GetValue<string>("Algolia:IndexPictures"));
+            Index tagsIndex = client.InitIndex(configuration.GetValue<string>("Algolia:IndexTags"));
 
             Field<UserType>(
                 "createUser",
@@ -31,10 +35,14 @@ namespace Api.Models
                 resolve: context =>
                 {
                     var data = context.GetArgument<Core.Models.User>("user");
-                    var user = userRepository.Add(data);
-                    userRepository.SaveChanges();
-                    data.objectID = data.Id.ToString();
-                    usersIndex.AddObject(data);
+                    var user = DataAccess.User.Add(data);
+                    if (user != null)
+                    {
+                        data.objectID = data.Id.ToString();
+                        usersIndex.AddObject(data);
+                        //Save object id
+                        DataAccess.User.Update(data);
+                    }
                     return mapper.Map<User>(user);
                 }
             );
@@ -47,10 +55,12 @@ namespace Api.Models
                 resolve: context =>
                 {
                     var data = context.GetArgument<Core.Models.User>("user");
-                    userRepository.Update(data);
-                    userRepository.SaveChanges();
-                    usersIndex.PartialUpdateObject(JObject.Parse(Newtonsoft.Json.JsonConvert.SerializeObject(data)));
-                    return mapper.Map<User>(null);
+                    bool result = DataAccess.User.Update(data);
+                    if (result)
+                    {
+                        usersIndex.PartialUpdateObject(JObject.Parse(Newtonsoft.Json.JsonConvert.SerializeObject(data)));
+                    }
+                    return mapper.Map<User>(result ? data : null);
                 }
             );
 
@@ -62,7 +72,7 @@ namespace Api.Models
                 resolve: context =>
                 {
                     var data = context.GetArgument<Core.Models.Picture>("picture");
-                    if (userRepository.Get(data.UserId).Result == null)
+                    if (DataAccess.User.Get(data.UserId).Result == null)
                     {
                         return null;
                     }
@@ -89,7 +99,7 @@ namespace Api.Models
                 resolve: context =>
                 {
                     var data = context.GetArgument<Core.Models.Comment>("comment");
-                    if (userRepository.Get(data.UserId).Result == null || pictureRepository.Get(data.PictureId).Result == null)
+                    if (DataAccess.User.Get(data.UserId).Result == null || pictureRepository.Get(data.PictureId).Result == null)
                     {
                         return null;
                     }
@@ -113,7 +123,7 @@ namespace Api.Models
                 resolve: context =>
                 {
                     var data = context.GetArgument<Core.Models.Comment>("comment");
-                    if (userRepository.Get(data.UserId).Result == null || pictureRepository.Get(data.PictureId).Result == null)
+                    if (DataAccess.User.Get(data.UserId).Result == null || pictureRepository.Get(data.PictureId).Result == null)
                     {
                         return null;
                     }
@@ -131,7 +141,7 @@ namespace Api.Models
                 resolve: context =>
                 {
                     var data = context.GetArgument<Core.Models.Like>("like");
-                    if (userRepository.Get(data.UserId).Result == null || pictureRepository.Get(data.PictureId).Result == null)
+                    if (DataAccess.User.Get(data.UserId).Result == null || pictureRepository.Get(data.PictureId).Result == null)
                     {
                         return null;
                     }
@@ -155,7 +165,7 @@ namespace Api.Models
                 resolve: context =>
                 {
                     var data = context.GetArgument<Core.Models.Like>("like");
-                    if (userRepository.Get(data.UserId).Result == null || pictureRepository.Get(data.PictureId).Result == null)
+                    if (DataAccess.User.Get(data.UserId).Result == null || pictureRepository.Get(data.PictureId).Result == null)
                     {
                         return null;
                     }
@@ -178,7 +188,7 @@ namespace Api.Models
                 resolve: context =>
                 {
                     var data = context.GetArgument<Core.Models.UserFollower>("follower");
-                    if (userRepository.Get(data.UserId).Result == null || userRepository.Get(data.FollowerId).Result == null)
+                    if (DataAccess.User.Get(data.UserId).Result == null || DataAccess.User.Get(data.FollowerId).Result == null)
                     {
                         return null;
                     }
@@ -204,7 +214,7 @@ namespace Api.Models
                 resolve: context =>
                 {
                     var data = context.GetArgument<Core.Models.UserFollower>("follower");
-                    if (userRepository.Get(data.UserId).Result == null || userRepository.Get(data.FollowerId).Result == null)
+                    if (DataAccess.User.Get(data.UserId).Result == null || DataAccess.User.Get(data.FollowerId).Result == null)
                     {
                         return null;
                     }
@@ -230,12 +240,10 @@ namespace Api.Models
                    if (data.Email == null || data.Email == "" || data.Password == null || data.Password == "")
                        return null;
                    data.Password = Helper.Users.HashPassword(data.Password);
-                   var user = userRepository.Add(data);
-                   userRepository.SaveChanges();
+                   var user = DataAccess.User.Add(data);
                    user.objectID = data.Id.ToString();
                    usersIndex.AddObject(data);
-                   userRepository.Update(data);
-                   userRepository.SaveChanges();
+                   DataAccess.User.Update(data);
                    Helper.AppHttpContext.HttpContext.Response.Cookies.Append(".Amstramgram.Cookie", user.Password);
                    return mapper.Map<User>(user);
                }
@@ -252,7 +260,7 @@ namespace Api.Models
                     if (data.Email == null || data.Email == "" || data.Password == null || data.Password == "")
                         return null;
                     data.Password = Helper.Users.HashPassword(data.Password);
-                    var user = userRepository.SignInUser(data).Result;
+                    var user = DataAccess.User.SignInUser(data).Result;
                     Helper.AppHttpContext.HttpContext.Response.Cookies.Append(".Amstramgram.Cookie", user.AccessToken);
                     return mapper.Map<User>(user);
                 }

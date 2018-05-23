@@ -24,6 +24,7 @@ using Api.Helper;
 using System;
 using Microsoft.AspNetCore.HttpOverrides;
 using Api.Controllers;
+
 //using Core.Logic;
 
 namespace Api
@@ -47,7 +48,6 @@ namespace Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             // Add framework services.
 
             services.AddCors();
@@ -82,13 +82,10 @@ namespace Api
             });
             services.AddSingleton<IConfiguration>(Configuration);
 
-
             /*services.Configure<MvcOptions>(options =>
             {
                 options.Filters.Add(new RequireHttpsAttribute());
             });*/
-
-
 
             services.AddAutoMapper(typeof(Startup));
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings
@@ -96,11 +93,9 @@ namespace Api
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             };
 
-
             services.AddScoped<AmstramgramQuery>();
             services.AddScoped<AmstramgramMutation>();
 
-            services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IPictureRepository, PictureRepository>();
             services.AddTransient<ILikeRepository, LikeRepository>();
             services.AddTransient<ICommentRepository, CommentRepository>();

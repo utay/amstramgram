@@ -6,7 +6,7 @@ namespace Api.Models
 {
     public class UserType : ObjectGraphType<User>
     {
-        public UserType(Core.Data.IUserRepository userRepository, IMapper mapper)
+        public UserType(IMapper mapper)
         {
             Name = "User";
             Description = "A super normal user";
@@ -27,7 +27,7 @@ namespace Api.Models
                 "pictures",
                 resolve: context =>
                 {
-                    var pictures = userRepository.GetPictures(context.Source.Id).Result;
+                    var pictures = DataAccess.User.GetPictures(context.Source.Id).Result;
                     var mapped = mapper.Map<IEnumerable<Picture>>(pictures);
                     return mapped;
                 }
@@ -37,7 +37,7 @@ namespace Api.Models
                 "followers",
                 resolve: context =>
                 {
-                    var followers = userRepository.GetFollowers(context.Source.Id).Result;
+                    var followers = DataAccess.User.GetFollowers(context.Source.Id).Result;
                     var mapped = mapper.Map<IEnumerable<UserFollower>>(followers);
                     return mapped;
                 }
@@ -47,7 +47,7 @@ namespace Api.Models
                 "following",
                 resolve: context =>
                 {
-                    var following = userRepository.GetFollowing(context.Source.Id).Result;
+                    var following = DataAccess.User.GetFollowing(context.Source.Id).Result;
                     var mapped = mapper.Map<IEnumerable<UserFollower>>(following);
                     return mapped;
                 }
