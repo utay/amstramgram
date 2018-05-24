@@ -196,8 +196,6 @@ namespace Api.Controllers
                 }
                 try
                 {
-                    var test = Users.HashPassword(model.Password);
-                    var test2 = Users.HashPassword(model.Password);
                     Core.Models.User user = new Core.Models.User
                     {
                         Email = model.Email,
@@ -209,6 +207,7 @@ namespace Api.Controllers
                         Gender = "",
                         Phone = "",
                         Picture = "",
+                        AccessToken = "",
                         Private = false
                     };
                     var userInDb = DataAccess.User.Add(user);
@@ -226,9 +225,9 @@ namespace Api.Controllers
                     Helper.AppHttpContext.HttpContext.Session.SetObject<long>("currentUserId", userInDb.Id);
                     return Redirect(_configuration.GetValue<string>("RedirectFront"));
                 }
-                catch
+                catch (Exception e)
                 {
-                    ViewData["Error"] = "Impossible to save the current user";
+                    ViewData["Error"] = "Impossible to save the current user\n" + e.Message;
                     return RedirectToAction("Index");
                 }
             }

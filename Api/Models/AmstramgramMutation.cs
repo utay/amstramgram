@@ -53,6 +53,12 @@ namespace Api.Models
                 resolve: context =>
                 {
                     var data = context.GetArgument<Core.Models.User>("user");
+                    var userInDb = DataAccess.User.Get(data.Id).Result;
+                    if (userInDb == null || userInDb.Id == 0)
+                        //User doesn't exist
+                        return null;
+                    data.objectID = userInDb.objectID;
+                    data.AccessToken = userInDb.AccessToken;
                     bool result = DataAccess.User.Update(data);
                     if (result)
                     {
@@ -84,6 +90,7 @@ namespace Api.Models
                     }
                     data.objectID = data.Id.ToString();
                     picturesIndex.AddObject(data);
+                    DataAccess.Picture.Update(data);
                     return mapper.Map<Picture>(picture);
                 }
             );

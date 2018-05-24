@@ -2,6 +2,7 @@ namespace Api.Models
 {
     public class User
     {
+        public string objectId { get; set; }
         public long Id { get; set; }
         public string Nickname { get; set; }
         public string Email { get; set; }
