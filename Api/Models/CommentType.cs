@@ -5,7 +5,7 @@ namespace Api.Models
 {
     public class CommentType : ObjectGraphType<Comment>
     {
-        public CommentType(Core.Data.ICommentRepository commentRepository, IMapper mapper)
+        public CommentType(IMapper mapper)
         {
             Name = "Comment";
             Description = "A comment";
@@ -18,7 +18,7 @@ namespace Api.Models
                 "user",
                 resolve: context =>
                 {
-                    var user = commentRepository.GetUser(context.Source.Id).Result;
+                    var user = DataAccess.Comment.GetUser(context.Source.Id).Result;
                     var mapped = mapper.Map<User>(user);
                     return mapped;
                 }

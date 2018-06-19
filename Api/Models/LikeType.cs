@@ -5,7 +5,7 @@ namespace Api.Models
 {
     public class LikeType : ObjectGraphType<Like>
     {
-        public LikeType(Core.Data.ILikeRepository likeRepository, IMapper mapper)
+        public LikeType(IMapper mapper)
         {
             Name = "Like";
             Description = "A like";
@@ -16,7 +16,7 @@ namespace Api.Models
                 "user",
                 resolve: context =>
                 {
-                    var user = likeRepository.GetUser(context.Source.Id).Result;
+                    var user = DataAccess.Like.GetUser(context.Source.Id).Result;
                     var mapped = mapper.Map<User>(user);
                     return mapped;
                 }

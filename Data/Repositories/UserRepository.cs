@@ -8,7 +8,9 @@ namespace Data.Repositories
 {
     public class UserRepository : BaseRepository<User, long>, IUserRepository
     {
-        public UserRepository() { }
+        public UserRepository()
+        {
+        }
 
         public UserRepository(AmstramgramContext db, ILogger<UserRepository> logger)
             : base(db, logger)
@@ -48,7 +50,7 @@ namespace Data.Repositories
         public async Task<User> SignInUser(User user)
         {
             User returnUser = (await GetAll()).Find(u => u.Email == user.Email && u.Password == user.Password);
-            return user;
+            return returnUser;
         }
     }
 }

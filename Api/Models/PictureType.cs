@@ -6,7 +6,7 @@ namespace Api.Models
 {
     public class PictureType : ObjectGraphType<Picture>
     {
-        public PictureType(Core.Data.IPictureRepository pictureRepository, IMapper mapper)
+        public PictureType(IMapper mapper)
         {
             Name = "Picture";
             Description = "A picture";
@@ -22,7 +22,7 @@ namespace Api.Models
                 "user",
                 resolve: context =>
                 {
-                    var user = pictureRepository.GetUser(context.Source.Id).Result;
+                    var user = DataAccess.Picture.GetUser(context.Source.Id).Result;
                     var mapped = mapper.Map<User>(user);
                     return mapped;
                 }
@@ -32,7 +32,7 @@ namespace Api.Models
                 "tags",
                 resolve: context =>
                 {
-                    var tags = pictureRepository.GetTags(context.Source.Id).Result;
+                    var tags = DataAccess.Picture.GetTags(context.Source.Id).Result;
                     var mapped = mapper.Map<IEnumerable<Tag>>(tags);
                     return mapped;
                 }
@@ -42,7 +42,7 @@ namespace Api.Models
                 "comments",
                 resolve: context =>
                 {
-                    var comments = pictureRepository.GetComments(context.Source.Id).Result;
+                    var comments = DataAccess.Picture.GetComments(context.Source.Id).Result;
                     var mapped = mapper.Map<IEnumerable<Comment>>(comments);
                     return mapped;
                 }
@@ -52,7 +52,7 @@ namespace Api.Models
                 "likes",
                 resolve: context =>
                 {
-                    var likes = pictureRepository.GetLikes(context.Source.Id).Result;
+                    var likes = DataAccess.Picture.GetLikes(context.Source.Id).Result;
                     var mapped = mapper.Map<IEnumerable<Like>>(likes);
                     return mapped;
                 }
