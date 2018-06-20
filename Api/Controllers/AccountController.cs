@@ -281,7 +281,7 @@ namespace Api.Controllers
             try
             {
                 var userInDb = await DataAccess.User.GetFromEmail(userDB.Email);
-                if (userDB == null)
+                if (userInDb == null)
                 {
                     //First connection
                     userDB = DataAccess.User.Add(userDB);
