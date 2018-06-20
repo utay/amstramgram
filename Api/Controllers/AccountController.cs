@@ -78,7 +78,6 @@ namespace Api.Controllers
             if (userDB != null && userDB.Id != 0)
             {
                 Helper.AppHttpContext.HttpContext.Session.SetObject<long>("currentUserId", userDB.Id);
-                Helper.AppHttpContext.HttpContext.Response.Cookies.Delete(".Amstramgram.Cookie");
             }
             return Json(userDB);
         }
