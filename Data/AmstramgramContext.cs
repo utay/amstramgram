@@ -33,7 +33,7 @@ namespace Data
         {
             if (_migrations)
             {
-                optionsBuilder.UseSqlServer("Server=localhost;Database=master;User=sa;Password=Strong(!)Password;");
+                optionsBuilder.UseSqlServer("Server=sqlserver;Database=master;User=sa;Password=Strong(!)Password;");
             }
 
             base.OnConfiguring(optionsBuilder);

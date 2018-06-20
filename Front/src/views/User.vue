@@ -1,11 +1,11 @@
 <template>
   <div v-if="!isLoading">
-    <el-row 
+    <el-row
       :gutter="10"
       style="width: 50%; margin: 0 auto; padding-bottom: 25px"
       justify="center">
       <el-col :span="8">
-        <div 
+        <div
           :style="{ 'background-image': 'url(' + user.picture+ ')' }"
           class="round-icon" />
       </el-col>
@@ -27,7 +27,7 @@
                 type="primary"
                 style="margin-left: auto"
                 icon="el-icon-back"
-                @click="logout"/> 
+                @click="logout"/>
             </div>
             <el-button
               v-else

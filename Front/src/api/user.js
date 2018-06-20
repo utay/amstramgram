@@ -84,8 +84,8 @@ export const updateUser = async (form) => {
 export const followUser = async (followedId, followerId) => {
   return await query(`mutation {
     createFollower(follower:{
-      userId:${followerId},
-      followerId:${followedId},
+      userId:${followedId},
+      followerId:${followerId},
     }) {
       user{
         nickname
@@ -97,8 +97,8 @@ export const followUser = async (followedId, followerId) => {
 export const unfollowUser = async (followedId, followerId) => {
   return await query(`mutation {
     deleteFollower(follower:{
-      userId:${followerId},
-      followerId:${followedId},
+      userId:${followedId},
+      followerId:${followerId},
     }) {
       user{
         nickname
@@ -113,7 +113,7 @@ export const getAllCommentsAndLikes = async (id) => {
     user(id: ${id}) {
       pictures {
         id
-        image 
+        image
         comments {
           text
           createdAt
@@ -121,7 +121,7 @@ export const getAllCommentsAndLikes = async (id) => {
             id
             nickname
             picture
-          }  
+          }
         }
         likes {
           createdAt
@@ -129,7 +129,7 @@ export const getAllCommentsAndLikes = async (id) => {
             id
             nickname
             picture
-          }  
+          }
         }
       }
     }

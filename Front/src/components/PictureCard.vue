@@ -19,6 +19,7 @@
         {{ pictureData.user.nickname }}
       </router-link>
       <el-button
+        v-if="pictureData.user.id !== $store.state.currentUser.id"
         :type="followed ? 'primary' : ''"
         round
         style="margin-left: auto"
@@ -35,13 +36,14 @@
         :icon="`el-icon-circle-check${liked ? '' : '-outline'}`"
         circle
         @click="toggleLikePicture"/>
-      <el-button 
+      <el-button
         type="text"
         style=""
         @click="likesVisible = true">
         {{ likesPhrase }}
       </el-button>
       <div>
+        <div class="time">{{ pictureData.createdAt | fromNow }}</div>
         <router-link
           :to="{name: 'user', params: { id: pictureData.user.id}}"
           class="nickname">
@@ -55,15 +57,14 @@
           type="text">
           #{{ tag.text }}
         </el-button>
-        <span class="time pull-right">{{ pictureData.createdAt | fromNow }}</span>
       </div>
       <div
         v-for="(comment, i) of orderedComments"
         v-if="i < 5 || showMore"
-        :key="i">
-        
+        :key="i"
+        style="border-bottom: 1px solid #F5F7FA; border-top: 1px solid #F5F7FA; padding: 10px 0">
         <router-link
-          :to="{name: 'user', params: { id: comment.user.id}}"
+          :to="{name: 'user', params: { id: comment.user.id }}"
           class="nickname">
           {{ comment.user.nickname }}
         </router-link>
@@ -99,10 +100,10 @@
         v-for="(like, i) of pictureData.likes"
         :key="i"
         class="center-vertically">
-        <div 
+        <div
           :style="{ 'background-image': 'url(' + like.user.picture + ')' }"
           class="round-icon flex" />
-        
+
         <router-link
           :to="{name: 'user', params: { id: like.user.id}}"
           class="flex nickname header black-text">
@@ -161,7 +162,7 @@ export default {
   computed: {
     followed(){
       return !!this.$store.state.currentUser
-        .following.find(user => user.id === this.pictureData.user.id);
+        .following.find(user => user.user.id === this.pictureData.user.id);
     },
 
     liked() {
@@ -180,10 +181,17 @@ export default {
     }
   },
 
+  watch: {
+    async picture() {
+      const res = await getPicture(this.id || this.picture.Id);
+      this.pictureData = res.picture;
+      await this.refreshPicture();
+    }
+  },
+
   async created() {
     const res = await getPicture(this.id || this.picture.Id);
     this.pictureData = res.picture;
-    console.log(res);
     await this.refreshPicture();
   },
 
@@ -196,7 +204,7 @@ export default {
       }
       await this.refreshPicture();
     },
-    
+
     async createComment() {
       await createComment(
         this.comment,
@@ -206,13 +214,13 @@ export default {
       await this.refreshPicture();
       this.comment = "";
     },
-    
+
     async refreshPicture() {
       const response = await getLikesAndComments(this.pictureData.id);
       this.likes = response.picture.likes;
       this.comments = response.picture.comments;
     },
-    
+
     async toggleFollowUser(id) {
       if (this.followed) {
         await unfollowUser(id, this.$store.state.currentUser.id);

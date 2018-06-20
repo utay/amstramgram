@@ -15,7 +15,7 @@ namespace Api.Models
                 resolve: context =>
                 {
                     var userFollower = DataAccess.UserFollower.GetUser(context.Source.Id).Result;
-                    var mapped = mapper.Map<UserFollower>(userFollower);
+                    var mapped = mapper.Map<User>(userFollower);
                     return mapped;
                 }
             );
@@ -25,7 +25,7 @@ namespace Api.Models
                 resolve: context =>
                 {
                     var userFollower = DataAccess.UserFollower.GetFollower(context.Source.Id).Result;
-                    var mapped = mapper.Map<UserFollower>(userFollower);
+                    var mapped = mapper.Map<User>(userFollower);
                     return mapped;
                 }
             );
