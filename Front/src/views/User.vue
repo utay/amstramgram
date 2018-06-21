@@ -32,19 +32,19 @@
             <el-button
               v-else
               :type="followed ? 'primary' : ''"
+              :icon="followed ? 'el-icon-minus' : 'el-icon-plus'"
               round
               style="margin-left: auto"
-              icon="el-icon-plus"
               @click="toggleFollowUser(id)">
               {{ followed ? "Unfollow": "Follow" }}
             </el-button>
           </div>
           <div>
-            <span>{{ user.pictures.length }}</span> Publications
-            <span>{{ user.followers.length }}</span> Abonnés
-            <span>{{ user.following.length }}</span> Suivis
+            <b>{{ user.pictures.length }}</b> Publications
+            <b>{{ user.followers.length }}</b> Abonnés
+            <b>{{ user.following.length }}</b> Suivis
           </div>
-          <div>
+          <div style="margin-top: 10px">
             {{ user.description }}
           </div>
         </el-card>
@@ -97,7 +97,7 @@ export default {
 
     followed(){
       return !!this.$store.state.currentUser
-        .following.find(user => user.id === this.pictureData.user.id);
+        .following.find(user => user.user.id === this.id);
     },
   },
 

@@ -20,10 +20,10 @@
       </router-link>
       <el-button
         v-if="pictureData.user.id !== $store.state.currentUser.id"
+        :icon="followed ? 'el-icon-minus' : 'el-icon-plus'"
         :type="followed ? 'primary' : ''"
         round
         style="margin-left: auto"
-        icon="el-icon-plus"
         @click="toggleFollowUser(pictureData.user.id)">
         {{ followed ? "Unfollow": "Follow" }}
       </el-button>
@@ -42,8 +42,10 @@
         @click="likesVisible = true">
         {{ likesPhrase }}
       </el-button>
-      <div>
-        <div class="time">{{ pictureData.createdAt | fromNow }}</div>
+      <div style="margin-bottom: 10px">
+        <div
+          style="margin-bottom: 10px"
+          class="time">{{ pictureData.createdAt | fromNow }}</div>
         <router-link
           :to="{name: 'user', params: { id: pictureData.user.id}}"
           class="nickname">
